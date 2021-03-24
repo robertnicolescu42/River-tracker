@@ -6,6 +6,7 @@
     :headers="arr"
     :items="test"
     :items-per-page="5"
+    scrollable
     class="elevation-1"
   >
      <template v-slot:item="row">
@@ -121,15 +122,15 @@
       </template>
   </v-data-table>
     <!-- sparkline -->
-    <v-card  max-width="1200" style="margin:0 auto; margin-top:5em">
+    <v-card  max-width="1200" style="margin:0 auto; margin-top:4em">
       <v-sheet color="rgba(0, 0, 0, .12)">
         <v-sparkline
           :labels="labels"
           label-size="2.5"
           :value="values"
           color="rgba(255, 255, 255, .7)"
-          height="100"
-          padding="15"
+          height="80"
+          padding="12.5"
           stroke-linecap="lineCap"
           smooth
           type="trend"
@@ -142,9 +143,6 @@
     </v-card>
     <!-- sparkline -->
     </div>
-    <!-- footer -->
-    
-    <!-- footer -->
     </v-container>
 
 
