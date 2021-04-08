@@ -6,6 +6,7 @@
     :headers="arr"
     :items="test"
     :items-per-page="5"
+    scrollable
     class="elevation-1"
   >
      <template v-slot:item="row">
@@ -15,7 +16,8 @@
             <td>{{row.item.photo_path}}</td>
             <td>
             <!--Edit dialog --->
-                <template>
+                <template
+                :newDistance = row.item.distance>
                 <v-row justify="center">
                     <v-dialog
                     :retain-focus="false"
@@ -48,20 +50,11 @@
                                 sm="6"
                                 md="4"
                             >
-                                <v-text-field
+                                <v-text-field 
+                                v-model="newDistance"
                                 label="Distance*"
-                                hint="the distance read from the sensor"
+                                hint="the distance read from the sensor: "
                                 required
-                                ></v-text-field>
-                            </v-col>
-                            <v-col
-                                cols="12"
-                                sm="6"
-                                md="4"
-                            >
-                                <v-text-field
-                                label="Photo path"
-                                hint="the path that the photo is located at"
                                 ></v-text-field>
                             </v-col>
                             </v-row>
@@ -72,12 +65,20 @@
                             >
                             <v-container>
                                 <v-date-picker
-                                    v-model="picker"
+                                    v-model="newDateValue"
                                     year-icon="mdi-calendar-blank"
                                     prev-icon="mdi-skip-previous"
                                     next-icon="mdi-skip-next"
                                 ></v-date-picker>
                             </v-container>
+                            </v-col>
+                            
+                            <v-col>
+                                <v-time-picker
+                                v-model="newTimeValue"
+                                format="24hr"
+                                use-seconds
+                                ></v-time-picker>
                             </v-col>
                             </v-row>
                         </v-container>
@@ -87,7 +88,7 @@
                             <v-btn
                             color="red darken-1"
                             text
-                            @click="deleteEntry(x.id)"
+                            @click="deleteEntry(row.item.id)"
                         >
                             Delete
                         </v-btn>
@@ -103,7 +104,7 @@
                         <v-btn
                             color="blue darken-1"
                             text
-                            @click="dialog = false"
+                            @click="editEntryDistance(row.item.id, newDistance, newDateValue, newTimeValue)"
                         >
                             Save
                         </v-btn>
@@ -112,24 +113,21 @@
                     </v-dialog>
                 </v-row>
                 </template>
-
-
             <!--Edit dialog --->
-                    
             </td>
           </tr>
       </template>
   </v-data-table>
     <!-- sparkline -->
-    <v-card  max-width="1200" style="margin:0 auto; margin-top:5em">
+    <v-card max-width="1200" style="margin:0 auto; margin-top:4em">
       <v-sheet color="rgba(0, 0, 0, .12)">
         <v-sparkline
           :labels="labels"
           label-size="2.5"
           :value="values"
           color="rgba(255, 255, 255, .7)"
-          height="100"
-          padding="15"
+          height="80"
+          padding="12.5"
           stroke-linecap="lineCap"
           smooth
           type="trend"
@@ -142,9 +140,6 @@
     </v-card>
     <!-- sparkline -->
     </div>
-    <!-- footer -->
-    
-    <!-- footer -->
     </v-container>
 
 
@@ -173,6 +168,7 @@ export default {
             { text: 'Photo Path', value: 'photo_path', sortable: false,},
             { text: 'Actions', value: 'action', sortable: false, align: 'center'}
             ],
+        newDistance: 0,
     }),
     
     firestore: {
@@ -205,6 +201,15 @@ export default {
             // if(confirm("Are you sure you want to delete this entry ?"))
                 db.collection("distances").doc(id).delete();
                 this.dialog = false;
+        },
+
+        async editEntryDistance(id, newDistanceValue, newDate, newTime){
+                let newDateTimeValue = newDate + ' ' + newTime
+                db.collection("distances").doc(id).update({
+                    distance: parseInt(newDistanceValue),
+                    date_time: newDateTimeValue
+                });
+                this.dialog = false
         }
     }
 }
