@@ -2,8 +2,9 @@
   <v-app>
   <v-card color="basil">
     <v-card-title class="text-center justify-center py-2">
+      <img src="../src/icons/wave-inverted.png" alt="wave-pic">
       <h1 class="font-weight-bold display-1 basil--text">
-        Rivertracker
+         Rivertracker
       </h1>
     </v-card-title>
 
