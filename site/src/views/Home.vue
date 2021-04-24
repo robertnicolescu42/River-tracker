@@ -16,8 +16,7 @@
             <td>{{row.item.photo_path}}</td>
             <td>
             <!--Edit dialog --->
-                <template
-                :newDistance = row.item.distance>
+                <template>
                 <v-row justify="center">
                     <v-dialog
                     :retain-focus="false"
@@ -52,6 +51,7 @@
                             >
                                 <v-text-field 
                                 v-model="newDistance"
+                                :placeholder="row.item.distance"
                                 label="Distance*"
                                 hint="the distance read from the sensor: "
                                 required
@@ -101,6 +101,7 @@
                         >
                             Close
                         </v-btn>
+                        <p>{{row.item.id}}</p>
                         <v-btn
                             color="blue darken-1"
                             text
@@ -168,7 +169,7 @@ export default {
             { text: 'Photo Path', value: 'photo_path', sortable: false,},
             { text: 'Actions', value: 'action', sortable: false, align: 'center'}
             ],
-        newDistance: 0,
+        newDistance: undefined,
     }),
     
     firestore: {

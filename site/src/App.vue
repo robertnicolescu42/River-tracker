@@ -32,6 +32,8 @@
   </v-card>
     <router-view />
 
+
+
     <!-- footer -->
         <v-footer 
         absolute
