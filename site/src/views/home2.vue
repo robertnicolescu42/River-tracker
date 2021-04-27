@@ -1,22 +1,45 @@
 <template>
 <v-container>
     <div>
-        <v-data-table
+      <!-- sparkline -->
+    <v-card style="margin:0 auto; margin-top:0.2em; margin-bottom: 0.5em">
+      <v-sheet color="rgba(0, 0, 0, .12)">
+        <v-sparkline
+          :labels="labels.reverse()"
+          label-size="2.5"
+          :value="values.reverse()"
+          color="rgba(255, 255, 255, .7)"
+          height="60"
+          padding="19.5"
+          stroke-linecap="lineCap"
+          smooth
+          type="trend"
+          :line-width="2.5"
+          auto-draw
+          auto-draw-duration="1000"
+        >
+        </v-sparkline>
+      </v-sheet>
+    </v-card>
+    <!-- sparkline -->
+    
+    <v-data-table
     :headers="headers"
     :items="data"
     update:sort-desc
+    :items-per-page="5"
     class="elevation-1"
   >
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Data</v-toolbar-title>
-        <v-divider
+        <v-toolbar-title>Recent readings show that {{recentAverage()}}</v-toolbar-title>
+        <!-- <v-divider
           class="mx-4"
           inset
           vertical
-        ></v-divider>
+        ></v-divider> -->
         <v-spacer></v-spacer>
         <!-- edit/delete dialogue -->
         <v-dialog
@@ -42,7 +65,9 @@
                     ></v-text-field>
                   </v-col>
                 </v-row>
+                    <h4 class="mb-1">Photo</h4>
                     <img :src="`data:image/png;base64,${editedItem.photo_path}`"  width="300" height="300" /><!-- image decoding -->
+                    
               </v-container>
             </v-card-text>
 
@@ -98,27 +123,7 @@
   </v-data-table>
 
 
-      <!-- sparkline -->
-    <v-card max-width="1200" style="margin:0 auto; margin-top:4em">
-      <v-sheet color="rgba(0, 0, 0, .12)">
-        <v-sparkline
-          :labels="labels"
-          label-size="2.5"
-          :value="values"
-          color="rgba(255, 255, 255, .7)"
-          height="76"
-          padding="19.5"
-          stroke-linecap="lineCap"
-          smooth
-          type="trend"
-          :line-width="2.5"
-          auto-draw
-          auto-draw-duration="1000"
-        >
-        </v-sparkline>
-      </v-sheet>
-    </v-card>
-    <!-- sparkline -->
+
 
   <!-- <pre>
       {{data}}
@@ -157,6 +162,7 @@ export default {
       ],
       data: [],
       data1: [],
+      riverData: [],
       editedIndex: -1,
       editedItem: {
         id: '0'
@@ -169,12 +175,14 @@ export default {
       },
       
         values(){
-            return this.data.map(x => x.distance);
+            return this.data.slice(-8).map(x => x.distance);
+            // return this.data.map(x => x.distance);
+
         },
 
         labels(){
-          //  return this.data.map(x => x.distance + "cm @" + x.date_time.substr(11,18)); 
-           return this.data.map(x => x.distance + "cm @" + x.date_time.substr(0,10)); 
+           return this.data.map(x => x.distance + "cm @" + x.date_time.substr(11,18)); 
+          //  return this.data.map(x => x.distance + "cm @" + x.date_time.substr(0,10)); 
 
         }
     },
@@ -288,6 +296,22 @@ export default {
       decoded(code){
         let string_code = code.toString()
         return string_code.substring(13).slice(0, -1)
+      },
+
+      recentAverage(){
+        var sum = 0;
+        var array = this.data.slice(-10);
+        for (var i = 0; i < 10; i++){
+            sum += parseInt(array[i].distance, 10)
+        }
+        console.log(array)
+
+        var avg = sum/10
+        let low_bound = this.riverData[0].low_bound
+        let high_bound = this.riverData[0].high_bound
+        if((low_bound <= avg) && (avg <= high_bound))
+          return "the river is in normal conditions: " + avg.toString() + "cm height, between " + low_bound.toString() + "cm and " + high_bound.toString() + "cm."
+        return "the river is in abnormal conditions: " + avg.toString() + "cm height, not between " + low_bound.toString() + "cm and " + high_bound.toString() + "cm."
       }
 
     },
@@ -295,6 +319,9 @@ export default {
         data: db.collection("distances").orderBy("date_time", "desc"),
         // data: db.collection("distances").where("date_time".substr(0,10), ">=", lastWeekDate()).orderBy("date_time", "desc"), //dataset for last month
         // test: db.collection("distances"),
+
+
+        riverData: db.collection("setup_data").where("device_id", "==", 1)
     },
 
   }

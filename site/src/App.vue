@@ -35,8 +35,7 @@
 
 
     <!-- footer -->
-        <v-footer 
-        absolute
+        <v-footer
         >
             <v-col
             class="text-right"
