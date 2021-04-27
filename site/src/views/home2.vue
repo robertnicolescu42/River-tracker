@@ -4,7 +4,7 @@
         <v-data-table
     :headers="headers"
     :items="data"
-    sort-by="calories"
+    update:sort-desc
     class="elevation-1"
   >
     <template v-slot:top>
@@ -18,11 +18,11 @@
           vertical
         ></v-divider>
         <v-spacer></v-spacer>
+        <!-- edit/delete dialogue -->
         <v-dialog
           v-model="dialog"
           max-width="500px"
         >
-          
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
@@ -42,6 +42,7 @@
                     ></v-text-field>
                   </v-col>
                 </v-row>
+                    <img :src="`data:image/png;base64,${editedItem.photo_path}`"  width="300" height="300" /><!-- image decoding -->
               </v-container>
             </v-card-text>
 
@@ -75,6 +76,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <!-- edit/delete dialogue -->
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
@@ -139,6 +141,8 @@ import {db} from "../firebase/db.js";
         return lastMonthDisplayPadded
       }
 
+
+
 console.log(lastMonthDate())
 //TIME FUNCTIONS
 export default {
@@ -148,7 +152,7 @@ export default {
       headers: [
         { text: 'Date', value: 'date_time' },
         { text: 'Distance (cm)', value: 'distance' },
-        { text: 'Photo Path', value: 'photo_path',sortable: false },
+        // { text: 'Photo Path', value: 'photo_path',sortable: false },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       data: [],
@@ -185,7 +189,6 @@ export default {
     },
 
     methods: {
-
       editItem (item) {
         console.log(item)
         this.editedIndex = this.data.indexOf(item)
@@ -249,7 +252,7 @@ export default {
         return lastDayDisplayPadded
       },
 
-      lastDayDate(){
+      lastDayDate: function lastDayDate(){
         var today = new Date();
         var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
         var lastWeekMonth = lastWeek.getMonth() + 1;
@@ -280,12 +283,17 @@ export default {
 
         var lastMonthDisplayPadded = ("0000" + lastWeekYear.toString()).slice(-4) + '-' + ("00" + lastWeekMonth.toString()).slice(-2) + '-' + ("00" + lastWeekDay.toString()).slice(-2);
         return lastMonthDisplayPadded
+      },
+
+      decoded(code){
+        let string_code = code.toString()
+        return string_code.substring(13).slice(0, -1)
       }
 
     },
     firestore: {
-        data: db.collection("distances").orderBy("date_time"),
-        //  data: db.collection("distances").where("date_time".substr(0,10), ">=", lastMonthDate()).orderBy("date_time"), //dataset for last month
+        data: db.collection("distances").orderBy("date_time", "desc"),
+        // data: db.collection("distances").where("date_time".substr(0,10), ">=", lastWeekDate()).orderBy("date_time", "desc"), //dataset for last month
         // test: db.collection("distances"),
     },
 

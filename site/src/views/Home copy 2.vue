@@ -1,124 +1,102 @@
 <template>
-  <div>
-      <v-container>
-          <div style="margin-bottom: 2em"> 
+<v-container>
+    <div>
         <v-data-table
-    :headers="arr"
-    :items="test"
-    :items-per-page="5"
-    scrollable
+    :headers="headers"
+    :items="data"
+    update:sort-desc
     class="elevation-1"
   >
-     <template v-slot:item="row">
-          <tr>
-            <td>{{row.item.date_time}}</td>
-            <td>{{row.item.distance}}</td>
-            <td>{{row.item.photo_path}}</td>
-            <td>
-            <!--Edit dialog --->
-                <template>
-                <v-row justify="center">
-                    <v-dialog
-                    :retain-focus="false"
-                    v-model="dialog"
-                    max-width="600px"
-                    >
-                    <template v-slot:activator="{ on, attrs }" >
-                        <v-btn
-                        fab
-                        color="primary darken-2"
-                        dark
-                        v-bind="attrs"
-                        v-on="on"
-                        small
-                        >
-                        <v-icon>
-                        mdi-circle-edit-outline
-                        </v-icon>
-                        </v-btn>
-                    </template>
-                    <v-card>
-                        <v-card-title>
-                        <span class="headline">Reading data</span>
-                        </v-card-title>
-                        <v-card-text>
-                        <v-container>
-                            <v-row>
-                            <v-col
-                                cols="12"
-                                sm="6"
-                                md="4"
-                            >
-                                <v-text-field 
-                                v-model="newDistance"
-                                :placeholder="row.item.distance"
-                                label="Distance*"
-                                hint="the distance read from the sensor: "
-                                required
-                                ></v-text-field>
-                            </v-col>
-                            </v-row>
-                            <v-row>
-                            <v-col
-                                cols="12"
-                                sm="6"
-                            >
-                            <v-container>
-                                <v-date-picker
-                                    v-model="newDateValue"
-                                    year-icon="mdi-calendar-blank"
-                                    prev-icon="mdi-skip-previous"
-                                    next-icon="mdi-skip-next"
-                                ></v-date-picker>
-                            </v-container>
-                            </v-col>
-                            
-                            <v-col>
-                                <v-time-picker
-                                v-model="newTimeValue"
-                                format="24hr"
-                                use-seconds
-                                ></v-time-picker>
-                            </v-col>
-                            </v-row>
-                        </v-container>
-                        <small>*indicates required field</small>
-                        </v-card-text>
-                        <v-card-actions>
-                            <v-btn
-                            color="red darken-1"
-                            text
-                            @click="deleteEntry(row.item.id)"
-                        >
-                            Delete
-                        </v-btn>
-                        <v-spacer></v-spacer>
-                       
-                        <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="dialog = false"
-                        >
-                            Close
-                        </v-btn>
-                        <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="editEntryDistance(row.item.id, newDistance, newDateValue, newTimeValue)"
-                        >
-                            Save
-                        </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                    </v-dialog>
+    <template v-slot:top>
+      <v-toolbar
+        flat
+      >
+        <v-toolbar-title>Data</v-toolbar-title>
+        <v-divider
+          class="mx-4"
+          inset
+          vertical
+        ></v-divider>
+        <v-spacer></v-spacer>
+        <v-dialog
+          v-model="dialog"
+          max-width="500px"
+        >
+          
+          <v-card>
+            <v-card-title>
+              <span class="headline">{{ formTitle }}</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.distance"
+                      label="Distance"
+                    ></v-text-field>
+                  </v-col>
                 </v-row>
-                </template>
-            <!--Edit dialog --->
-            </td>
-          </tr>
-      </template>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="close"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="save"
+              >
+                Save
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-dialog v-model="dialogDelete" max-width="500px">
+          <v-card>
+            <v-card-title class="headline">Are you sure you want to delete this item?</v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
+              <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-toolbar>
+    </template>
+    <template v-slot:item.actions="{ item }">
+      <v-icon
+        small
+        class="mr-2"
+        @click="editItem(item)"
+      >
+        mdi-pencil
+      </v-icon>
+      <v-icon
+        small
+        @click="deleteItem(item)"
+      >
+        mdi-delete
+      </v-icon>
+    </template>
+
   </v-data-table>
-    <!-- sparkline -->
+
+
+      <!-- sparkline -->
     <v-card max-width="1200" style="margin:0 auto; margin-top:4em">
       <v-sheet color="rgba(0, 0, 0, .12)">
         <v-sparkline
@@ -126,8 +104,8 @@
           label-size="2.5"
           :value="values"
           color="rgba(255, 255, 255, .7)"
-          height="80"
-          padding="12.5"
+          height="76"
+          padding="19.5"
           stroke-linecap="lineCap"
           smooth
           type="trend"
@@ -139,80 +117,186 @@
       </v-sheet>
     </v-card>
     <!-- sparkline -->
+
+  <!-- <pre>
+      {{data}}
+  </pre> -->
     </div>
-    </v-container>
-
-
-  </div>
-
+</v-container>
 </template>
 
 <script>
 import {db} from "../firebase/db.js";
-export default {
-    data: ()=>({
-        test:[],
-        search:"",
-        dialog: false,
-        value: [
-        ],       
-        time: null,
-        menu2: false,
-        modal2: false,
-        valDistance: 0,
-        arr:[{
-                text:'Date',
-                align: 'start',
-                value: 'date_time',
-            },
-            { text: 'Distance', value: 'distance' },
-            { text: 'Photo Path', value: 'photo_path', sortable: false,},
-            { text: 'Actions', value: 'action', sortable: false, align: 'center'}
-            ],
-    }),
-    
-    firestore: {
-        test: db.collection("distances").orderBy("date_time"),
-        // test: db.collection("distances"),
-    },
+//TIME FUNCTIONS
+      function lastMonthDate(){
+        var today = new Date();
+        var lastWeek = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+        var lastWeekMonth = lastWeek.getMonth() + 1;
+        var lastWeekDay = lastWeek.getDate();
+        var lastWeekYear = lastWeek.getFullYear();
 
-    computed:{
+        var lastMonthDisplayPadded = ("0000" + lastWeekYear.toString()).slice(-4) + '-' + ("00" + lastWeekMonth.toString()).slice(-2) + '-' + ("00" + lastWeekDay.toString()).slice(-2);
+        return lastMonthDisplayPadded
+      }
+
+
+
+console.log(lastMonthDate())
+//TIME FUNCTIONS
+export default {
+    data: () => ({
+      dialog: false,
+      dialogDelete: false,
+      headers: [
+        { text: 'Date', value: 'date_time' },
+        { text: 'Distance (cm)', value: 'distance' },
+        { text: 'Photo Path', value: 'photo_path',sortable: false },
+        { text: 'Actions', value: 'actions', sortable: false },
+      ],
+      data: [],
+      data1: [],
+      editedIndex: -1,
+      editedItem: {
+        id: '0'
+      },
+    }),
+
+    computed: {
+      formTitle () {
+        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      },
+      
         values(){
-            return this.test.map(x => x.distance);
+            return this.data.map(x => x.distance);
         },
 
         labels(){
-           return this.test.map(x => x.distance + "cm @" + x.date_time.substr(11,18)); 
+          //  return this.data.map(x => x.distance + "cm @" + x.date_time.substr(11,18)); 
+           return this.data.map(x => x.distance + "cm @" + x.date_time.substr(0,10)); 
+
         }
     },
 
-    methods:{
-        async execute(){
-            if(this.search != ""){
-                await db.collection("distances").add({
-                    name: this.search,
-                    location:""
-                })
-                this.search = ""
-            }
-        },
+    watch: {
+      dialog (val) {
+        val || this.close()
+      },
+      dialogDelete (val) {
+        val || this.closeDelete()
+      },
+      
+      url: function url() {
+        this.base64 = '';
+        this.error = '';
+      },    
+    },
 
-        async deleteEntry(id){
-            // if(confirm("Are you sure you want to delete this entry ?"))
-                db.collection("distances").doc(id).delete();
-                this.dialog = false;
-        },
+    methods: {
+      editItem (item) {
+        console.log(item)
+        this.editedIndex = this.data.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialog = true
+      },
 
-        async editEntryDistance(id, newDistanceValue, newDate, newTime){
-                let newDateTimeValue = newDate + ' ' + newTime
-                db.collection("distances").doc(id).update({
-                    distance: parseInt(newDistanceValue),
-                    date_time: newDateTimeValue
-                });
-                this.dialog = false
+      deleteItem (item) {
+        console.log(item)
+        this.editedIndex = item
+        this.dialogDelete = true
+      },
+
+      deleteItemConfirm () {
+        let data_id = this.editedIndex.id
+        this.closeDelete()
+        db.collection("distances").doc(data_id).delete();
+      },
+
+      close () {
+        this.dialog = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+
+      closeDelete () {
+        this.dialogDelete = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+
+      save () {
+        if (this.editedIndex > -1) {
+          Object.assign(this.data[this.editedIndex], this.editedItem)
+          let data_id = this.data[this.editedIndex].id
+          let newDistanceValue = this.editedItem.distance
+          db.collection("distances").doc(data_id).update({
+            distance: parseFloat(newDistanceValue),
+            date_time: this.data[this.editedIndex].date_time,
+            photo_path: this.data[this.editedIndex].photo_path
+          });
         }
-    }
-}
+          else {
+          this.data.push(this.editedItem)
+        }
+        this.close()
+      },
+
+      todayDateFormatted(){
+        var today = new Date();
+        var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        var lastWeekMonth = lastWeek.getMonth() + 1;
+        var lastWeekDay = lastWeek.getDate();
+        var lastWeekYear = lastWeek.getFullYear();
+
+        var lastDayDisplayPadded = ("0000" + lastWeekYear.toString()).slice(-4) + '-' + ("00" + lastWeekMonth.toString()).slice(-2) + '-' + ("00" + lastWeekDay.toString()).slice(-2);
+        return lastDayDisplayPadded
+      },
+
+      lastDayDate: function lastDayDate(){
+        var today = new Date();
+        var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+        var lastWeekMonth = lastWeek.getMonth() + 1;
+        var lastWeekDay = lastWeek.getDate();
+        var lastWeekYear = lastWeek.getFullYear();
+
+        var lastDayDisplayPadded = ("0000" + lastWeekYear.toString()).slice(-4) + '-' + ("00" + lastWeekMonth.toString()).slice(-2) + '-' + ("00" + lastWeekDay.toString()).slice(-2);
+        return lastDayDisplayPadded
+      },
+
+      lastWeekDate(){
+        var today = new Date();
+        var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+        var lastWeekMonth = lastWeek.getMonth() + 1;
+        var lastWeekDay = lastWeek.getDate();
+        var lastWeekYear = lastWeek.getFullYear();
+
+        var lastWeekDisplayPadded = ("0000" + lastWeekYear.toString()).slice(-4) + '-' + ("00" + lastWeekMonth.toString()).slice(-2) + '-' + ("00" + lastWeekDay.toString()).slice(-2);
+        return lastWeekDisplayPadded
+      },
+
+      lastMonthDate(){
+        var today = new Date();
+        var lastWeek = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+        var lastWeekMonth = lastWeek.getMonth() + 1;
+        var lastWeekDay = lastWeek.getDate();
+        var lastWeekYear = lastWeek.getFullYear();
+
+        var lastMonthDisplayPadded = ("0000" + lastWeekYear.toString()).slice(-4) + '-' + ("00" + lastWeekMonth.toString()).slice(-2) + '-' + ("00" + lastWeekDay.toString()).slice(-2);
+        return lastMonthDisplayPadded
+      }
+
+    },
+    firestore: {
+        data: db.collection("distances").orderBy("date_time", "desc"),
+        // data: db.collection("distances").where("date_time".substr(0,10), ">=", lastWeekDate()).orderBy("date_time", "desc"), //dataset for last month
+        // test: db.collection("distances"),
+    },
+
+  }
+
 </script>
 
 <style>

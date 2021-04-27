@@ -6,9 +6,10 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from datetime import datetime
+import base64
 
 
-
+now = datetime.now()
 camera = PiCamera()
 def preview():
     camera.rotation = 180
@@ -18,20 +19,23 @@ def preview():
     camera.stop_preview()
 
 def takePic(text = "no distance aquired"):
+    global now
     camera.rotation = 180
-    camera.resolution = (2592, 1944)
+    camera.resolution = (500, 500)
     camera.start_preview()
     camera.annotate_text = "Approx. distance: ~" + text + " cm"
     camera.annotate_foreground = Color('black')
     camera.annotate_background = Color('white')
-    camera.annotate_text_size = 120
+    camera.annotate_text_size = 20
     
-    now = datetime.now()
     dt_string = now.strftime("%d %m %Y_%H:%M:%S")
     path = '/home/pi/Projects/Licenta/py/photos/%s.jpg' % dt_string
     camera.capture(path)
     camera.stop_preview()
-    return path
+    
+    with open(path, "rb") as img_file:
+        encoded = base64.b64encode(img_file.read())
+    return str(encoded)[2:][:-1]
     
 #takePic()
 
@@ -87,16 +91,17 @@ def readDistances():
     docs = distances_ref.stream()
 
     for doc in docs:
-        print(f'{doc.id} => {doc.to_dict()}')
+        print(f"{doc.id} => {doc.to_dict()}")
 
 def addDistance(distance_value, path):
     doc_ref = db.collection(u'distances')
     doc_ref.add({
         u'distance': distance_value,
-        u'photo_path': path
+        u'photo_path': path,
+        u'date_time': now.strftime("%Y-%m-%d %H:%M:%S") 
     })
     
-#addDistance(distance())
+#addDistance(distance(),takePic())
 
 #readDistances()
 
@@ -105,4 +110,7 @@ def dbCall():
     addDistance(distance_value, path)
     readDistances()
     
-dbCall()
+while True:
+    now = datetime.now()
+    dbCall()
+    sleep(240)
