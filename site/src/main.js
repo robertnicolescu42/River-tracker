@@ -6,7 +6,10 @@ import store from './store'
 import vuetify from './plugins/vuetify';
 
 Vue.config.productionTip = false
-Vue.component("NavBar", require("./components/Navigation.vue").default);
+Vue.component("lastDay", require("./components/last_day.vue").default);
+Vue.component("lastWeek", require("./components/last_week.vue").default);
+Vue.component("lastMonth", require("./components/last_month.vue").default);
+Vue.component("last3Months", require("./components/last_3months.vue").default);
 new Vue({
   router,
   store,
