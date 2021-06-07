@@ -3,21 +3,21 @@
     <!-- sparkline -->
     <v-card style="margin: 0 auto; margin-top: 0.2em; margin-bottom: 0.5em">
       <v-sheet color="rgba(0, 0, 0, .12)">
-        <v-sparkline
-          :labels="labels.reverse()"
-          label-size="2.5"
-          :value="values.reverse()"
-          color="rgba(255, 255, 255, .7)"
-          height="60"
-          padding="19.5"
-          stroke-linecap="lineCap"
-          smooth
-          type="trend"
-          :line-width="2.5"
-          auto-draw
-          auto-draw-duration="1000"
-        >
-        </v-sparkline>
+<v-sparkline
+  :labels="labels.reverse()"
+  label-size="2.5"
+  :value="values.reverse()"
+  color="rgba(255, 255, 255, .7)"
+  height="60"
+  padding="19.5"
+  stroke-linecap="lineCap"
+  smooth
+  type="trend"
+  :line-width="2.5"
+  auto-draw
+  auto-draw-duration="1000"
+>
+</v-sparkline>
       </v-sheet>
     </v-card>
     <!-- sparkline -->

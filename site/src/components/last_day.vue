@@ -131,28 +131,6 @@
 <script>
 import { db } from "../firebase/db.js";
 //TIME FUNCTIONS
-function lastMonthDate() {
-  var today = new Date();
-  var lastWeek = new Date(
-    today.getFullYear(),
-    today.getMonth() - 1,
-    today.getDate()
-  );
-  var lastWeekMonth = lastWeek.getMonth() + 1;
-  var lastWeekDay = lastWeek.getDate();
-  var lastWeekYear = lastWeek.getFullYear();
-
-  var lastMonthDisplayPadded =
-    ("0000" + lastWeekYear.toString()).slice(-4) +
-    "-" +
-    ("00" + lastWeekMonth.toString()).slice(-2) +
-    "-" +
-    ("00" + lastWeekDay.toString()).slice(-2);
-  return lastMonthDisplayPadded;
-}
-
-console.log(lastMonthDate());
-//TIME FUNCTIONS
 function lastDayDate() {
   var today = new Date();
   var lastWeek = new Date(
@@ -188,9 +166,7 @@ export default {
     data1: [],
     riverData: [],
     editedIndex: -1,
-    editedItem: {
-      id: "0",
-    },
+    editedItem: {},
   }),
 
   computed: {
@@ -227,6 +203,7 @@ export default {
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
+
     ShowItem(item) {
       console.log(item);
       this.editedIndex = this.data.indexOf(item);
@@ -264,7 +241,7 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.data[this.editedIndex], this.editedItem);
+        // Object.assign(this.data[this.editedIndex], this.editedItem);
         let data_id = this.data[this.editedIndex].id;
         let newDistanceValue = this.editedItem.distance;
         db.collection("distances")
@@ -299,79 +276,13 @@ export default {
         ("00" + lastWeekDay.toString()).slice(-2);
       return lastDayDisplayPadded;
     },
-
-    lastDayDate() {
-      var today = new Date();
-      var lastWeek = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate() - 1
-      );
-      var lastWeekMonth = lastWeek.getMonth() + 1;
-      var lastWeekDay = lastWeek.getDate();
-      var lastWeekYear = lastWeek.getFullYear();
-
-      var lastDayDisplayPadded =
-        ("0000" + lastWeekYear.toString()).slice(-4) +
-        "-" +
-        ("00" + lastWeekMonth.toString()).slice(-2) +
-        "-" +
-        ("00" + lastWeekDay.toString()).slice(-2);
-      return lastDayDisplayPadded;
-    },
-
-    lastWeekDate() {
-      var today = new Date();
-      var lastWeek = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate() - 7
-      );
-      var lastWeekMonth = lastWeek.getMonth() + 1;
-      var lastWeekDay = lastWeek.getDate();
-      var lastWeekYear = lastWeek.getFullYear();
-
-      var lastWeekDisplayPadded =
-        ("0000" + lastWeekYear.toString()).slice(-4) +
-        "-" +
-        ("00" + lastWeekMonth.toString()).slice(-2) +
-        "-" +
-        ("00" + lastWeekDay.toString()).slice(-2);
-      return lastWeekDisplayPadded;
-    },
-
-    lastMonthDate() {
-      var today = new Date();
-      var lastWeek = new Date(
-        today.getFullYear(),
-        today.getMonth() - 1,
-        today.getDate()
-      );
-      var lastWeekMonth = lastWeek.getMonth() + 1;
-      var lastWeekDay = lastWeek.getDate();
-      var lastWeekYear = lastWeek.getFullYear();
-
-      var lastMonthDisplayPadded =
-        ("0000" + lastWeekYear.toString()).slice(-4) +
-        "-" +
-        ("00" + lastWeekMonth.toString()).slice(-2) +
-        "-" +
-        ("00" + lastWeekDay.toString()).slice(-2);
-      return lastMonthDisplayPadded;
-    },
-
-    decoded(code) {
-      let string_code = code.toString();
-      return string_code.substring(13).slice(0, -1);
-    },
-
     recentAverage() {
       var sum = 0;
       var array = this.data.slice(-10);
       for (var i = 0; i < 10; i++) {
         sum += parseInt(array[i].distance, 10);
       }
-      console.log(array);
+      // console.log(array);
 
       var avg = sum / 10;
       let low_bound = this.riverData[0].low_bound;
