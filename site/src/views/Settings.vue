@@ -6,15 +6,6 @@
           <span class="headline">Location</span>
         </v-card-title>
         <div style="width: 100%">
-          <!-- <iframe
-            width="100%"
-            height="600"
-            frameborder="0"
-            scrolling="no"
-            marginheight="0"
-            marginwidth="0"
-            src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=44.868998803301714,%2024.87540205443056+(River%20Tracker)&amp;t=&amp;z=15&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
-          ></iframe> -->
         </div>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -40,7 +31,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <HereMap  :center="center" />
+    <HereMap  :center="center" :data="data" />
     <v-simple-table dark>
       <template v-slot:default>
         <thead>
@@ -98,11 +89,17 @@ export default {
       dialogDelete: false,
       editedIndex: -1,
       editedItem: {},
-      center:{ 
-        lat: 40.730610, 
-        lng: -73.935242
-      }
+      // center:[44.85660955687459, 24.86774132196378]
     };
+  },
+  computed:{
+    longitude(){
+      return this.data.map((x => x.longitude));
+    },
+     
+    latitude(){
+      return this.data.map((x => x.latitude));
+    },
   },
   watch: {
     dialog(val) {
@@ -116,9 +113,6 @@ export default {
     data: db.collection("setup_data").orderBy("device_id", "asc"),
   },
   methods: {
-    map_place() {
-      return "https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=44.868998803301714,%2024.87540205443056+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed";
-    },
     deleteItem(item) {
       this.editedIndex = item;
       this.dialogDelete = true;
