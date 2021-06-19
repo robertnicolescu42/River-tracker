@@ -1,12 +1,15 @@
 <template>
   <v-container>
-    <v-dialog v-model="dialogShow" max-width="800px">
+    <v-dialog v-model="dialogShow" max-width="900px" max-height="800" style="z-index:1000" >
       <v-card>
         <v-card-title>
           <span class="headline">Location</span>
         </v-card-title>
-        <div style="width: 100%">
-        </div>
+
+
+        <mapSetup />
+
+
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="dialogShow = false">
@@ -31,7 +34,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <HereMap  :center="center" :data="data" />
+    <HereMap style="margin-bottom: 3em" :center="center" :data="data" />
     <v-simple-table dark>
       <template v-slot:default>
         <thead>
@@ -69,15 +72,18 @@
         </tbody>
       </template>
     </v-simple-table>
+    <pre>{{data[0]}}</pre>
   </v-container>
 </template>
 
 <script>
 import { db } from "../firebase/db.js";
 import HereMap from '../components/HereMap'
+import MapSetup from '../components/edit_setup_map'
 export default {
   components: {
-    HereMap
+    HereMap,
+    MapSetup
   },
   data() {
     return {
@@ -89,7 +95,7 @@ export default {
       dialogDelete: false,
       editedIndex: -1,
       editedItem: {},
-      // center:[44.85660955687459, 24.86774132196378]
+      center:[0,0]
     };
   },
   computed:{
@@ -102,6 +108,9 @@ export default {
     },
   },
   watch: {
+    data: function(val){
+      this.center= [val[0].latitude, val[0].longitude]
+    },
     dialog(val) {
       val || this.close();
     },
@@ -114,6 +123,7 @@ export default {
   },
   methods: {
     deleteItem(item) {
+      this.center = [item.latitude, item.longitude]
       this.editedIndex = item;
       this.dialogDelete = true;
     },
@@ -137,10 +147,18 @@ export default {
       db.collection("setup_data").doc(data_id).delete();
     },
     ShowItem(item) {
-      console.log(item);
-      this.editedIndex = this.data.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogShow = true;
+       console.log(item);
+       this.center = [item.latitude, item.longitude]
+    },
+    editItem(item) {
+       console.log(item);
+       this.center = [item.latitude, item.longitude]
+      // this.editedIndex = this.data.indexOf(item);
+      // this.editedItem = Object.assign({}, item);
+      
+       this.dialogShow = true;
+
+
     },
   },
 };

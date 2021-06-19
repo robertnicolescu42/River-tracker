@@ -277,6 +277,7 @@ export default {
       return lastDayDisplayPadded;
     },
     recentAverage() {
+      lastDayDate()
       var sum = 0;
       var array = this.data.slice(-10);
       for (var i = 0; i < 10; i++) {
@@ -310,11 +311,14 @@ export default {
   },
   firestore: {
     // data: db.collection("distances").orderBy("date_time", "desc"),
-    data: db
+    // data: db
+    //   .collection("distances")
+    //   .where("date_time".substr(0, 10), ">=", lastDayDate())
+    //   .orderBy("date_time", "desc"), //dataset for last day
+
+      data: db
       .collection("distances")
-      .where("date_time".substr(0, 10), ">=", lastDayDate())
-      .orderBy("date_time", "desc"), //dataset for last day
-    // test: db.collection("distances"),
+      .orderBy("date_time", "desc").limit(10), //dataset for last day
 
     riverData: db.collection("setup_data").where("device_id", "==", 1),
   },

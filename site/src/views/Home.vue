@@ -9,7 +9,7 @@
       color="basil"
       grow
     >
-      <v-tab>Last Day</v-tab>
+      <v-tab>Last Readings</v-tab>
       <v-tab>Last Week</v-tab>
       <v-tab>Last Month</v-tab>
       <v-tab>Last 3 Months</v-tab>

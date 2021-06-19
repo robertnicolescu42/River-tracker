@@ -57,24 +57,44 @@
                       ></v-text-field>
                     </v-col>
                   </v-row>
-                  <h4 class="mb-1">Photo</h4>
+                </v-container>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="close">
+                  Cancel
+                </v-btn>
+                <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+          <v-dialog v-model="dialogShow" max-width="800px">
+            <v-card>
+              <v-card-title>
+                <span class="headline">Photo</span>
+              </v-card-title>
+
+              <v-card-text>
+                <v-container style="display: flex; justify-content: center">
                   <img
                     :src="`data:image/png;base64,${editedItem.photo_path}`"
-                    width="300"
-                    height="300"
+                    width="500"
+                    height="500"
                   /><!-- image decoding -->
                 </v-container>
               </v-card-text>
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn pain color="red darken-1" text @click="close">
-                  Cancel
+                <v-btn color="blue darken-1" text @click="dialogShow = false">
+                  Exit
                 </v-btn>
-                <v-btn plain :loading="loading" color="blue darken-1" text @click="save"> Save </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
+
           <v-dialog v-model="dialogDelete" max-width="500px">
             <v-card>
               <v-card-title class="headline"
@@ -96,16 +116,18 @@
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
+        <v-icon small class="mr-2" @click="ShowItem(item)"> mdi-eye </v-icon>
         <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
         <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
       </template>
     </v-data-table>
 
-    <!-- <pre>
+    <!-- <pre
       {{data}}
   </pre> -->
   </div>
 </template>
+
 
 <script>
 import { db } from "../firebase/db.js";
@@ -133,6 +155,7 @@ function lastMonthDate() {
 export default {
   components: {},
   data: () => ({
+    dialogShow: false,
     dialog: false,
     dialogDelete: false,
     headers: [
@@ -145,9 +168,7 @@ export default {
     data1: [],
     riverData: [],
     editedIndex: -1,
-    editedItem: {
-      id: "0",
-    },
+    editedItem: {},
   }),
 
   computed: {
@@ -185,6 +206,13 @@ export default {
       this.dialog = true;
     },
 
+    ShowItem(item) {
+      console.log(item);
+      this.editedIndex = this.data.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialogShow = true;
+    },
+
     deleteItem(item) {
       console.log(item);
       this.editedIndex = item;
@@ -215,7 +243,7 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.data[this.editedIndex], this.editedItem);
+        // Object.assign(this.data[this.editedIndex], this.editedItem);
         let data_id = this.data[this.editedIndex].id;
         let newDistanceValue = this.editedItem.distance;
         db.collection("distances")
@@ -250,79 +278,13 @@ export default {
         ("00" + lastWeekDay.toString()).slice(-2);
       return lastDayDisplayPadded;
     },
-
-    lastDayDate: function lastDayDate() {
-      var today = new Date();
-      var lastWeek = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate() - 1
-      );
-      var lastWeekMonth = lastWeek.getMonth() + 1;
-      var lastWeekDay = lastWeek.getDate();
-      var lastWeekYear = lastWeek.getFullYear();
-
-      var lastDayDisplayPadded =
-        ("0000" + lastWeekYear.toString()).slice(-4) +
-        "-" +
-        ("00" + lastWeekMonth.toString()).slice(-2) +
-        "-" +
-        ("00" + lastWeekDay.toString()).slice(-2);
-      return lastDayDisplayPadded;
-    },
-
-    lastWeekDate() {
-      var today = new Date();
-      var lastWeek = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate() - 7
-      );
-      var lastWeekMonth = lastWeek.getMonth() + 1;
-      var lastWeekDay = lastWeek.getDate();
-      var lastWeekYear = lastWeek.getFullYear();
-
-      var lastWeekDisplayPadded =
-        ("0000" + lastWeekYear.toString()).slice(-4) +
-        "-" +
-        ("00" + lastWeekMonth.toString()).slice(-2) +
-        "-" +
-        ("00" + lastWeekDay.toString()).slice(-2);
-      return lastWeekDisplayPadded;
-    },
-
-    lastMonthDate() {
-      var today = new Date();
-      var lastWeek = new Date(
-        today.getFullYear(),
-        today.getMonth() - 1,
-        today.getDate()
-      );
-      var lastWeekMonth = lastWeek.getMonth() + 1;
-      var lastWeekDay = lastWeek.getDate();
-      var lastWeekYear = lastWeek.getFullYear();
-
-      var lastMonthDisplayPadded =
-        ("0000" + lastWeekYear.toString()).slice(-4) +
-        "-" +
-        ("00" + lastWeekMonth.toString()).slice(-2) +
-        "-" +
-        ("00" + lastWeekDay.toString()).slice(-2);
-      return lastMonthDisplayPadded;
-    },
-
-    decoded(code) {
-      let string_code = code.toString();
-      return string_code.substring(13).slice(0, -1);
-    },
-
     recentAverage() {
       var sum = 0;
       var array = this.data.slice(-10);
       for (var i = 0; i < 10; i++) {
         sum += parseInt(array[i].distance, 10);
       }
-      console.log(array);
+      // console.log(array);
 
       var avg = sum / 10;
       let low_bound = this.riverData[0].low_bound;

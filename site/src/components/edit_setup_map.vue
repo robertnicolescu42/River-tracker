@@ -1,23 +1,26 @@
 <template>
-<l-map style="height: 350px" :zoom="zoom" :center="center">
+<div>
+<l-map style="height: 500px" :zoom="zoom" :center="this.center" @click="addMarker">
 <l-tile-layer :url="url"></l-tile-layer>
-<l-marker v-for="item in data"
-        :key="item.id"
-        :lat-lng="[item.latitude, item.longitude]"
+<l-marker 
+        v-for="item in markers"
+        :key="item"
+        :lat-lng="item"
         :icon="icon">
-  <l-popup>Device number {{item.device_id}}.</l-popup>
 </l-marker>
 <l-icon
           :icon-anchor="staticAnchor"
           class-name="someExtraClass">
-<!-- <div class="headline">{{ customText }}</div> -->
 </l-icon>
 </l-map>
+{{markers}}
+
+</div>
 </template>
 
 <script>
 import L from 'leaflet';
-import {LMap, LTileLayer, LMarker, LIcon, LPopup} from 'vue2-leaflet';
+import {LMap, LTileLayer, LMarker, LIcon} from 'vue2-leaflet';
 
 
 export default {
@@ -26,8 +29,10 @@ export default {
     LTileLayer,
     LMarker,
     LIcon,
-    LPopup
   },
+  props: {
+   data: Object
+},
   data () {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -37,15 +42,30 @@ export default {
         iconSize: [50, 50],
         iconAnchor: [16, 16]
       }),
+      clicked: false,
+      markers: [
+      ],
+      center: [44.848928713917395, 24.892791371311404],
       staticAnchor: [16, 16],
-      //customText: '',
       iconSize: 64
     };
   },
-  props: {
-   center: Array,
-   data: Array
-},
+  mounted: function(){
+        setTimeout(function() { window.dispatchEvent(new Event('resize')) }, 200);
+
+    },
+  methods:{
+    addMarker(event) {
+      if(this.markers.length == 0){
+        this.markers.push(event.latlng);
+        this.clicked = true;
+      }else{
+        this.markers.splice(event, 1);
+        this.markers.push(event.latlng);
+      }
+
+    },
+  },
   computed: {
     dynamicSize () {
       return [this.iconSize, this.iconSize * 1.15];
