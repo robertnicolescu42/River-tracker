@@ -7,7 +7,19 @@ import vuetify from './plugins/vuetify';
 import VueFriendlyIframe from 'vue-friendly-iframe';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
+// import * as firebase from "firebase";
 
+// const firebaseConfig = {
+//   apiKey: "AIzaSyBy8L07RxjRsPKyTq7AC0geJUpAh6T8T4I",
+//   authDomain: "river-tracker-295612.firebaseapp.com",
+//   databaseURL: "https://river-tracker-295612.firebaseio.com",
+//   projectId: "river-tracker-295612",
+//   storageBucket: "river-tracker-295612.appspot.com",
+//   messagingSenderId: "344075096194",
+//   appId: "1:344075096194:web:4d6c5793da25221faba49b",
+//   measurementId: "G-P7THV24Y7M"
+// };
+// firebase.initializeApp(firebaseConfig);
 Vue.config.productionTip = false
 
 Vue.use(VueFriendlyIframe)
