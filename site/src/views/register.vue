@@ -66,7 +66,6 @@ import firebase from "firebase";
 export default {
   data() {
     return {
-      
       name: "",
       error: null,
       valid: false,

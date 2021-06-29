@@ -1,5 +1,7 @@
 <template>
   <div>
+{{myState}}
+
     <!-- sparkline -->
     <v-card style="margin: 0 auto; margin-top: 0.2em; margin-bottom: 0.5em">
       <v-sheet color="rgba(0, 0, 0, .12)">
@@ -26,6 +28,8 @@
       :headers="headers"
       :items="data"
       update:sort-desc
+      sort-by="date_time"
+      sort-desc=true
       :items-per-page="5"
       class="elevation-1"
     >
@@ -130,6 +134,7 @@
 
 <script>
 import { db } from "../firebase/db.js";
+
 //TIME FUNCTIONS
 function lastDayDate() {
   var today = new Date();
@@ -150,7 +155,9 @@ function lastDayDate() {
     ("00" + lastWeekDay.toString()).slice(-2);
   return lastDayDisplayPadded;
 }
+import { mapGetters } from 'vuex'
 export default {
+  
   components: {},
   data: () => ({
     dialogShow: false,
@@ -167,9 +174,13 @@ export default {
     riverData: [],
     editedIndex: -1,
     editedItem: {},
+
   }),
 
   computed: {
+    ...mapGetters({
+      myState: 'getCurrentDevice'
+    }),
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
     },
@@ -188,6 +199,14 @@ export default {
   },
 
   watch: {
+    myState: {
+      immediate: true,
+      handler(myState){
+        this.$bind('data', db.collection("distances").limit(10).where("device_id", "==", myState))
+        this.$bind('riverData', db.collection("setup_data").where("device_id", "==", myState))
+
+      }
+    },
     dialog(val) {
       val || this.close();
     },
@@ -310,15 +329,8 @@ export default {
     },
   },
   firestore: {
-    // data: db.collection("distances").orderBy("date_time", "desc"),
-    // data: db
-    //   .collection("distances")
-    //   .where("date_time".substr(0, 10), ">=", lastDayDate())
-    //   .orderBy("date_time", "desc"), //dataset for last day
-
       data: db
-      .collection("distances")
-      .orderBy("date_time", "desc").limit(10), //dataset for last day
+      .collection("distances").limit(10), //dataset for 10 readings
 
     riverData: db.collection("setup_data").where("device_id", "==", 1),
   },

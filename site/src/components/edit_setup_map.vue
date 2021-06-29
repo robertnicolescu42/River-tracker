@@ -13,7 +13,7 @@
           class-name="someExtraClass">
 </l-icon>
 </l-map>
-{{markers}}
+<!-- {{markers}} -->
 
 </div>
 </template>

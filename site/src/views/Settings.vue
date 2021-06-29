@@ -72,7 +72,7 @@
         </tbody>
       </template>
     </v-simple-table>
-    <pre>{{data[0]}}</pre>
+    <!-- <pre>{{data[0]}}</pre> -->
   </v-container>
 </template>
 
