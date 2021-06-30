@@ -8,7 +8,7 @@
           label-size="2.5"
           :value="values.reverse()"
           color="rgba(255, 255, 255, .7)"
-          height="60"
+          height="55"
           padding="19.5"
           stroke-linecap="lineCap"
           smooth
@@ -32,7 +32,7 @@
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title
-            >Recent readings show that {{ recentAverage() }}</v-toolbar-title
+            ><b>Device {{$store.getters.getCurrentDevice}}:</b> Recent readings show that {{ recentAverage() }}</v-toolbar-title
           >
           <!-- <v-divider
           class="mx-4"
@@ -150,7 +150,7 @@ function last3MonthsDate() {
     ("00" + lastWeekDay.toString()).slice(-2);
   return last3MonthsDisplayPadded;
 }
-
+import { mapGetters } from "vuex";
 export default {
   components: {},
   data: () => ({
@@ -171,6 +171,9 @@ export default {
   }),
 
   computed: {
+    ...mapGetters({
+      myState: "getCurrentDevice",
+    }),
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
     },
@@ -189,6 +192,19 @@ export default {
   },
 
   watch: {
+    myState: {
+      immediate: true,
+      handler(myState) {
+        this.$bind(
+          "data",
+          db.collection("distances").where("device_id", "==", myState)
+        );
+        this.$bind(
+          "riverData",
+          db.collection("setup_data").where("device_id", "==", myState)
+        );
+      },
+    },
     dialog(val) {
       val || this.close();
     },
@@ -198,6 +214,16 @@ export default {
   },
 
   methods: {
+    SetDevice(myState){
+        this.$bind(
+          "data",
+          db.collection("distances").where("device_id", "==", myState)
+        );
+        this.$bind(
+          "riverData",
+          db.collection("setup_data").where("device_id", "==", myState)
+        );
+    },
     editItem(item) {
       console.log(item);
       this.editedIndex = this.data.indexOf(item);

@@ -8,7 +8,7 @@
           label-size="2.5"
           :value="values.reverse()"
           color="rgba(255, 255, 255, .7)"
-          height="60"
+          height="55"
           padding="19.5"
           stroke-linecap="lineCap"
           smooth
@@ -26,13 +26,15 @@
       :headers="headers"
       :items="data"
       update:sort-desc
+      sort-by="date_time"
+      sort-desc="true"
       :items-per-page="5"
       class="elevation-1"
     >
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title
-            >Recent readings show that {{ recentAverage() }}</v-toolbar-title
+            ><b>Device {{$store.getters.getCurrentDevice}}:</b> Recent readings show that {{ recentAverage() }}</v-toolbar-title
           >
           <!-- <v-divider
           class="mx-4"
@@ -151,7 +153,7 @@ function lastMonthDate() {
     ("00" + lastWeekDay.toString()).slice(-2);
   return lastMonthDisplayPadded;
 }
-
+import { mapGetters } from "vuex";
 export default {
   components: {},
   data: () => ({
@@ -172,6 +174,9 @@ export default {
   }),
 
   computed: {
+    ...mapGetters({
+      myState: "getCurrentDevice",
+    }),
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
     },
@@ -190,6 +195,19 @@ export default {
   },
 
   watch: {
+    myState: {
+      immediate: true,
+      handler(myState) {
+        this.$bind(
+          "data",
+          db.collection("distances").where("device_id", "==", myState)
+        );
+        this.$bind(
+          "riverData",
+          db.collection("setup_data").where("device_id", "==", myState)
+        );
+      },
+    },
     dialog(val) {
       val || this.close();
     },
@@ -197,8 +215,21 @@ export default {
       val || this.closeDelete();
     },
   },
+  mounted: function(){
+    this.SetDevice(this.myState)
+  },
 
   methods: {
+    SetDevice(myState){
+        this.$bind(
+          "data",
+          db.collection("distances").where("device_id", "==", myState)
+        );
+        this.$bind(
+          "riverData",
+          db.collection("setup_data").where("device_id", "==", myState)
+        );
+    },
     editItem(item) {
       console.log(item);
       this.editedIndex = this.data.indexOf(item);
@@ -314,8 +345,8 @@ export default {
     // data: db.collection("distances").orderBy("date_time", "desc"),
     data: db
       .collection("distances")
-      .where("date_time".substr(0, 10), ">=", lastMonthDate())
-      .orderBy("date_time", "desc"), //dataset for last month
+      .limit(1500)
+      .where("date_time".substr(0, 10), ">=", lastMonthDate()), //dataset for last month
     // test: db.collection("distances"),
 
     riverData: db.collection("setup_data").where("device_id", "==", 1),

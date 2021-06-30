@@ -24,13 +24,9 @@
       </v-tab-item>
     </v-tabs-items> -->
       </v-card>
-      <pre>
-        {{ riverData }}
-  <hr>
-        {{devices1}}
-        {{$store.getters.getCurrentDevice}}
-      </pre>
-      <router-view id="router"></router-view>
+  <transition name="fade" mode="out-in">
+         <router-view/>
+       </transition>
     </div>
     <!-- footer -->
     <v-footer id="footer">
@@ -39,7 +35,7 @@
           mdi-cog-outline
         </v-icon></router-link
       >
-      <v-select :items="this.devices1" label="Fizzbuzz" v-model="$store.getters.getCurrentDevice" @change="setDevice($event)">
+      <v-select :items="this.devices1" label="Device ID" v-model="$store.getters.getCurrentDevice" @change="setDevice($event)" style="max-width:8em; margin-left:1em">
         <template v-slot:item="{ item, attrs, on }">
           <v-list-item v-bind="attrs" v-on="on">
             <v-list-item-title
@@ -118,4 +114,22 @@ body::-webkit-scrollbar {
 .flexing {
   display: flex;
 }
+.router-link-active {
+  color: red;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+  opacity: 0;
+}
+
+
 </style>

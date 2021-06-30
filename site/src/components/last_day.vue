@@ -1,16 +1,14 @@
 <template>
   <div>
-{{myState}}
-
     <!-- sparkline -->
-    <v-card style="margin: 0 auto; margin-top: 0.2em; margin-bottom: 0.5em">
+    <v-card style="margin: 0 auto; margin-top: 0.2em; margin-bottom: 0.5em;">
       <v-sheet color="rgba(0, 0, 0, .12)">
         <v-sparkline
           :labels="labels.reverse()"
           label-size="2.5"
           :value="values.reverse()"
           color="rgba(255, 255, 255, .7)"
-          height="60"
+          height="55"
           padding="19.5"
           stroke-linecap="lineCap"
           smooth
@@ -36,7 +34,7 @@
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title
-            >Recent readings show that {{ recentAverage() }}</v-toolbar-title
+            > <b>Device {{$store.getters.getCurrentDevice}}:</b> Recent readings show that {{ recentAverage() }}</v-toolbar-title
           >
           <!-- <v-divider
           class="mx-4"
@@ -204,7 +202,6 @@ export default {
       handler(myState){
         this.$bind('data', db.collection("distances").limit(10).where("device_id", "==", myState))
         this.$bind('riverData', db.collection("setup_data").where("device_id", "==", myState))
-
       }
     },
     dialog(val) {
@@ -214,8 +211,20 @@ export default {
       val || this.closeDelete();
     },
   },
-
+mounted: function(){
+    this.SetDevice(this.myState)
+  },
   methods: {
+    SetDevice(myState){
+        this.$bind(
+          "data",
+          db.collection("distances").where("device_id", "==", myState).limit(10)
+        );
+        this.$bind(
+          "riverData",
+          db.collection("setup_data").where("device_id", "==", myState)
+        );
+    },
     editItem(item) {
       console.log(item);
       this.editedIndex = this.data.indexOf(item);
@@ -332,7 +341,7 @@ export default {
       data: db
       .collection("distances").limit(10), //dataset for 10 readings
 
-    riverData: db.collection("setup_data").where("device_id", "==", 1),
+    riverData: db.collection("setup_data"),
   },
 };
 </script>
