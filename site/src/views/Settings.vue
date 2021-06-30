@@ -7,12 +7,32 @@
         </v-card-title>
 
 
-        <mapSetup />
-
+        <mapSetup :data="data1" />
 
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="dialogShow = false">
+            Exit
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    
+
+
+
+    <v-dialog v-model="addItem" max-width="900px" max-height="800" style="z-index:1000" >
+      <v-card>
+        <v-card-title>
+          <span class="headline">Location</span>
+        </v-card-title>
+
+
+        <mapSetup :data="data1" :add="add" />
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="addItem = false">
             Exit
           </v-btn>
         </v-card-actions>
@@ -34,8 +54,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <HereMap style="margin-bottom: 3em" :center="center" :data="data" />
-    <v-simple-table dark>
+    <HereMap style="margin-bottom: 3em" :center="center" :zoom1="zoom" :data="data" v-if="renderComponent"/>
+    <div style="display: flex;justify-content: center;">
+      <v-btn style="margin-bottom: 3em;" @click="add_item">Add Item</v-btn>
+    </div>
+      
+    <v-simple-table dark >
       <template v-slot:default>
         <thead>
           <tr>
@@ -87,15 +111,18 @@ export default {
   },
   data() {
     return {
-      map_link:
-        "https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=44.868998803301714,%2024.87540205443056+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed",
       data: [],
       dialogShow: false,
       dialog: false,
       dialogDelete: false,
       editedIndex: -1,
       editedItem: {},
-      center:[0,0]
+      center:[0,0],
+      data1:{},
+      addItem:false,
+      add:false,
+      zoom: 10, //zoom INITEIAL
+      renderComponent: true,
     };
   },
   computed:{
@@ -122,7 +149,19 @@ export default {
     data: db.collection("setup_data").orderBy("device_id", "asc"),
   },
   methods: {
+    add_item(){
+      this.add = true,
+      this.addItem=true
+
+    },
     deleteItem(item) {
+      this.zoom=15
+        this.renderComponent = false;
+
+        this.$nextTick(() => {
+          // Add the component back in
+          this.renderComponent = true;
+        });
       this.center = [item.latitude, item.longitude]
       this.editedIndex = item;
       this.dialogDelete = true;
@@ -147,11 +186,19 @@ export default {
       db.collection("setup_data").doc(data_id).delete();
     },
     ShowItem(item) {
-       console.log(item);
+
+        this.zoom=15
+        this.renderComponent = false;
+
+        this.$nextTick(() => {
+          // Add the component back in
+          this.renderComponent = true;
+        });
        this.center = [item.latitude, item.longitude]
     },
     editItem(item) {
        console.log(item);
+       this.data1=item;
        this.center = [item.latitude, item.longitude]
       // this.editedIndex = this.data.indexOf(item);
       // this.editedItem = Object.assign({}, item);

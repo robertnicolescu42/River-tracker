@@ -31,7 +31,7 @@ export default {
   data () {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      zoom: 13,      
+      zoom: this.zoom1,      
       icon: L.icon({
         iconUrl: 'https://image.flaticon.com/icons/png/512/684/684908.png',
         iconSize: [50, 50],
@@ -44,7 +44,8 @@ export default {
   },
   props: {
    center: Array,
-   data: Array
+   data: Array,
+   zoom1: Number
 },
   computed: {
     dynamicSize () {
