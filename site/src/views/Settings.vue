@@ -1,11 +1,15 @@
 <template>
   <v-container>
-    <v-dialog v-model="dialogShow" max-width="900px" max-height="800" style="z-index:1000" >
+    <v-dialog
+      v-model="dialogShow"
+      max-width="900px"
+      max-height="800"
+      style="z-index: 1000"
+    >
       <v-card>
         <v-card-title>
           <span class="headline">Location</span>
         </v-card-title>
-
 
         <mapSetup :data="data1" />
 
@@ -17,16 +21,17 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    
 
-
-
-    <v-dialog v-model="addItem" max-width="900px" max-height="800" style="z-index:1000" >
+    <v-dialog
+      v-model="addItem"
+      max-width="900px"
+      max-height="800"
+      style="z-index: 1000"
+    >
       <v-card>
         <v-card-title>
           <span class="headline">Location</span>
         </v-card-title>
-
 
         <mapSetup :data="data1" :add="add" />
 
@@ -54,12 +59,18 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <HereMap style="margin-bottom: 3em" :center="center" :zoom1="zoom" :data="data" v-if="renderComponent"/>
-    <div style="display: flex;justify-content: center;">
-      <v-btn style="margin-bottom: 3em;" @click="add_item">Add Item</v-btn>
+    <HereMap
+      style="margin-bottom: 3em"
+      :center="center"
+      :zoom1="zoom"
+      :data="data"
+      v-if="renderComponent"
+    />
+    <div style="display: flex; justify-content: center">
+      <v-btn style="margin-bottom: 3em" @click="add_item">Add Item</v-btn>
     </div>
-      
-    <v-simple-table dark >
+
+    <v-simple-table dark>
       <template v-slot:default>
         <thead>
           <tr>
@@ -102,12 +113,12 @@
 
 <script>
 import { db } from "../firebase/db.js";
-import HereMap from '../components/HereMap'
-import MapSetup from '../components/edit_setup_map'
+import HereMap from "../components/HereMap";
+import MapSetup from "../components/edit_setup_map";
 export default {
   components: {
     HereMap,
-    MapSetup
+    MapSetup,
   },
   data() {
     return {
@@ -117,26 +128,26 @@ export default {
       dialogDelete: false,
       editedIndex: -1,
       editedItem: {},
-      center:[0,0],
-      data1:{},
-      addItem:false,
-      add:false,
-      zoom: 10, //zoom INITEIAL
+      center: [0, 0],
+      data1: {},
+      addItem: false,
+      add: false,
+      zoom: 10, //zoom INITIAL
       renderComponent: true,
     };
   },
-  computed:{
-    longitude(){
-      return this.data.map((x => x.longitude));
+  computed: {
+    longitude() {
+      return this.data.map((x) => x.longitude);
     },
-     
-    latitude(){
-      return this.data.map((x => x.latitude));
+
+    latitude() {
+      return this.data.map((x) => x.latitude);
     },
   },
   watch: {
-    data: function(val){
-      this.center= [val[0].latitude, val[0].longitude]
+    data: function (val) {
+      this.center = [val[0].latitude, val[0].longitude];
     },
     dialog(val) {
       val || this.close();
@@ -149,20 +160,18 @@ export default {
     data: db.collection("setup_data").orderBy("device_id", "asc"),
   },
   methods: {
-    add_item(){
-      this.add = true,
-      this.addItem=true
-
+    add_item() {
+      (this.add = true), (this.addItem = true);
     },
     deleteItem(item) {
-      this.zoom=15
-        this.renderComponent = false;
+      this.zoom = 15;
+      this.renderComponent = false;
 
-        this.$nextTick(() => {
-          // Add the component back in
-          this.renderComponent = true;
-        });
-      this.center = [item.latitude, item.longitude]
+      this.$nextTick(() => {
+        // Add the component back in
+        this.renderComponent = true;
+      });
+      this.center = [item.latitude, item.longitude];
       this.editedIndex = item;
       this.dialogDelete = true;
     },
@@ -182,30 +191,45 @@ export default {
     },
     deleteItemConfirm() {
       let data_id = this.editedIndex.id;
+
       this.closeDelete();
+      //delete item from setup_data
       db.collection("setup_data").doc(data_id).delete();
+
+
+      //delete all corresponding items from distances with the respective
+      //device id
+      var device_id = this.editedIndex.device_id; 
+      db.collection("distances").where("device_id", "==", device_id)
+          .get()
+          .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                  db.collection("distances").doc(doc.id).delete()
+              });
+          })
+          .catch((error) => {
+              console.log("Error getting documents: ", error);
+          });
+
     },
     ShowItem(item) {
+      this.zoom = 15;
+      this.renderComponent = false;
 
-        this.zoom=15
-        this.renderComponent = false;
-
-        this.$nextTick(() => {
-          // Add the component back in
-          this.renderComponent = true;
-        });
-       this.center = [item.latitude, item.longitude]
+      this.$nextTick(() => {
+        // Add the component back in
+        this.renderComponent = true;
+      });
+      this.center = [item.latitude, item.longitude];
     },
     editItem(item) {
-       console.log(item);
-       this.data1=item;
-       this.center = [item.latitude, item.longitude]
+      console.log(item);
+      this.data1 = item;
+      this.center = [item.latitude, item.longitude];
       // this.editedIndex = this.data.indexOf(item);
       // this.editedItem = Object.assign({}, item);
-      
-       this.dialogShow = true;
 
-
+      this.dialogShow = true;
     },
   },
 };

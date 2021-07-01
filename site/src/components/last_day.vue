@@ -311,7 +311,6 @@ mounted: function(){
       for (var i = 0; i < 10; i++) {
         sum += parseInt(array[i].distance, 10);
       }
-      // console.log(array);
 
       var avg = sum / 10;
       let low_bound = this.riverData[0].low_bound;

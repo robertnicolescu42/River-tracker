@@ -18,33 +18,40 @@
     </l-map>
     <div>
       <v-container>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-text-field
+            v-model="low_bound"
+            :rules="rules.a"
+            label="Low bound"
+            :placeholder="data.low_bound"
+            required
+          ></v-text-field>
+          <v-text-field
+            v-model="high_bound"
+            :rules="rules.a"
+            label="high bound"
+            :placeholder="data.high_bound"
+            required
+          ></v-text-field>
+          <v-text-field
+            v-model="river_height"
+            label="River height"
+            :placeholder="data.river_height"
+            :rules="rules.a"
+            required
+          ></v-text-field>
+          <v-text-field
+            v-model="river_difference"
+            label="River diffrence"
+            :placeholder="data.river_difference"
+            :rules="rules.a"
+            required
+          ></v-text-field>
 
-      <v-form ref="form" v-model="valid" lazy-validation>
-        <v-text-field v-model="low_bound" :rules="rules.a" label="Low bound" :placeholder="data.low_bound" required></v-text-field>
-        <v-text-field v-model="high_bound" :rules="rules.a" label="high bound" :placeholder="data.high_bound" required></v-text-field>
-        <v-text-field
-          v-model="river_height"
-          label="River height"
-          :placeholder="data.river_height"
-          :rules="rules.a"
-          required
-        ></v-text-field>
-        <v-text-field
-          v-model="river_difference"
-          label="River diffrence"
-          :placeholder="data.river_difference"
-          :rules="rules.a"
-          required
-        ></v-text-field>
-
-        <v-btn
-          color="success"
-          class="mr-4"
-          @click="UpdateDevice"
-        >
-          Submit
-        </v-btn>
-      </v-form>
+          <v-btn color="success" class="mr-4" @click="UpdateDevice">
+            Submit
+          </v-btn>
+        </v-form>
       </v-container>
     </div>
 
@@ -66,7 +73,7 @@ export default {
   },
   props: {
     data: Object,
-    add: Boolean
+    add: Boolean,
   },
   data() {
     return {
@@ -82,24 +89,22 @@ export default {
       center: [44.848928713917395, 24.892791371311404],
       staticAnchor: [16, 16],
       iconSize: 64,
-      low_bound:0,
-      high_bound:0,
-      river_height:0,
-      river_difference:0,
-      data1:{},
-       rules: {
-          a: [
-            val => isNaN(val) == false  || `Not a number`,
-          ],
-        },
+      low_bound: 0,
+      high_bound: 0,
+      river_height: 0,
+      river_difference: 0,
+      data1: {},
+      rules: {
+        a: [(val) => isNaN(val) == false || `Not a number`],
+      },
     };
   },
   mounted: function () {
-    this.low_bound = this.data.low_bound
-    this.high_bound = this.data.high_bound
-    this.river_height = this.data.river_height
-    this.river_difference = this.data.river_difference
-    this.markers.push({"lat":this.data.latitude, "lng":this.data.longitude});
+    this.low_bound = this.data.low_bound;
+    this.high_bound = this.data.high_bound;
+    this.river_height = this.data.river_height;
+    this.river_difference = this.data.river_difference;
+    this.markers.push({ lat: this.data.latitude, lng: this.data.longitude });
     this.center = [this.data.latitude, this.data.longitude];
     setTimeout(function () {
       window.dispatchEvent(new Event("resize"));
@@ -107,22 +112,21 @@ export default {
   },
   watch: {
     data: function (val) {
-    this.low_bound = val.low_bound
-    this.high_bound = val.high_bound
-    this.river_height = val.river_height
-    this.river_difference = val.river_difference
-    this.markers=[]
-    this.markers.push({"lat":val.latitude, "lng":val.longitude});
-    this.center = [val.latitude, val.longitude];
+      this.low_bound = val.low_bound;
+      this.high_bound = val.high_bound;
+      this.river_height = val.river_height;
+      this.river_difference = val.river_difference;
+      this.markers = [];
+      this.markers.push({ lat: val.latitude, lng: val.longitude });
+      this.center = [val.latitude, val.longitude];
     },
   },
   firestore: {
     data1: db.collection("setup_data").orderBy("device_id", "asc"),
   },
   methods: {
-    UpdateDevice(){
-      if(this.add == false){
-
+    UpdateDevice() {
+      if (this.add == false) {
         db.collection("setup_data")
           .doc(this.data.id)
           .update({
@@ -133,24 +137,43 @@ export default {
             latitude: this.markers[0].lat,
             longitude: this.markers[0].lng,
           });
-    }else{ 
-      db.collection("setup_data")
-          .add({
+      } else {
+        db.collection("setup_data").add({
+          device_id: this.data1.slice(-1)[0].device_id + 1,
+          low_bound: Number(this.low_bound),
+          high_bound: Number(this.high_bound),
+          river_difference: Number(this.river_difference),
+          river_height: Number(this.river_height),
+          latitude: this.markers[0].lat,
+          longitude: this.markers[0].lng,
+        });
+
+        var today = new Date();
+        var todayPadded =
+          ("0000" + today.getFullYear().toString()).slice(-4) +
+          "-" +
+          ("00" + today.getMonth().toString()).slice(-2) +
+          "-" +
+          ("00" + today.getDate().toString()).slice(-2) +
+          " " +
+          today.getHours() +
+          ":" +
+          (today.getMinutes() + ":" + today.getSeconds());
+
+        for (let i = 0; i < 10; i++) {
+          db.collection("distances").add({
             device_id: this.data1.slice(-1)[0].device_id + 1,
-            low_bound: Number(this.low_bound),
-            high_bound: Number(this.high_bound),
-            river_difference: Number(this.river_difference),
-            river_height: Number(this.river_height),
-            latitude: this.markers[0].lat,
-            longitude: this.markers[0].lng,
+            date_time: todayPadded,
+            distance: Number(this.river_difference),
+            photo_path: "R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
           });
-    }
+        }
+      }
     },
     addMarker(event) {
-      this.markers=[]
-        this.markers.push(event.latlng);
-        this.clicked = true;
-
+      this.markers = [];
+      this.markers.push(event.latlng);
+      this.clicked = true;
     },
   },
   computed: {
