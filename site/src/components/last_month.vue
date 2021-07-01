@@ -4,9 +4,9 @@
     <v-card style="margin: 0 auto; margin-top: 0.2em; margin-bottom: 0.5em">
       <v-sheet color="rgba(0, 0, 0, .12)">
         <v-sparkline
-          :labels="labels.reverse()"
-          label-size="2.5"
-          :value="values.reverse()"
+          :labels="labels"
+          label-size="2.3"
+          :value="values"
           color="rgba(255, 255, 255, .7)"
           height="55"
           padding="19.5"
@@ -34,7 +34,8 @@
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title
-            ><b>Device {{$store.getters.getCurrentDevice}}:</b> Recent readings show that {{ recentAverage() }}</v-toolbar-title
+            ><b>Device {{ $store.getters.getCurrentDevice }}:</b> Recent
+            readings show that {{ recentAverage() }}</v-toolbar-title
           >
           <!-- <v-divider
           class="mx-4"
@@ -119,8 +120,17 @@
       </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="ShowItem(item)"> mdi-eye </v-icon>
-        <v-icon small v-if="user.loggedIn == true" class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-        <v-icon small v-if="user.loggedIn == true" @click="deleteItem(item)"> mdi-delete </v-icon>
+        <v-icon
+          small
+          v-if="user.loggedIn == true"
+          class="mr-2"
+          @click="editItem(item)"
+        >
+          mdi-pencil
+        </v-icon>
+        <v-icon small v-if="user.loggedIn == true" @click="deleteItem(item)">
+          mdi-delete
+        </v-icon>
       </template>
     </v-data-table>
 
@@ -150,7 +160,7 @@ function lastMonthDate() {
     "-" +
     ("00" + lastWeekMonth.toString()).slice(-2) +
     "-" +
-    ("00" + lastWeekDay.toString()).slice(-2);
+    ("00" + lastWeekDay.toString()).slice(-2) + " 00:00:00";
   return lastMonthDisplayPadded;
 }
 import { mapGetters } from "vuex";
@@ -176,22 +186,31 @@ export default {
   computed: {
     ...mapGetters({
       myState: "getCurrentDevice",
-      user: "user"
+      user: "user",
     }),
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
     },
 
     values() {
-      return this.data.slice(-8).map((x) => x.distance);
+      return this.valsAndDists("distances");
+      //return this.data.slice(-8).map((x) => x.distance);
       // return this.data.map(x => x.distance);
     },
 
     labels() {
-      return this.data.map(
-        (x) => x.distance + "cm @" + x.date_time.substr(11, 18)
-      );
-      //  return this.data.map(x => x.distance + "cm @" + x.date_time.substr(0,10));
+      // return this.data.map(
+      //   (x) => x.distance + "cm @" + x.date_time.substr(11, 18)
+      // );
+
+      var distances = this.valsAndDists("distances");
+      var dates = this.valsAndDists();
+      var list = [];
+      for (var i = 0; i < distances.length; i++)
+        list.push(distances[i] + "cm @" + dates[i].substr(11, 18));
+      return list;
+
+      // return this.data.map((x) => x.distance + "cm @" + x.date_time);
     },
   },
 
@@ -216,20 +235,41 @@ export default {
       val || this.closeDelete();
     },
   },
-  mounted: function(){
-    this.SetDevice(this.myState)
+  mounted: function () {
+    this.SetDevice(this.myState);
   },
 
   methods: {
-    SetDevice(myState){
-        this.$bind(
-          "data",
-          db.collection("distances").where("device_id", "==", myState)
-        );
-        this.$bind(
-          "riverData",
-          db.collection("setup_data").where("device_id", "==", myState)
-        );
+    valsAndDists(choice) {
+      var distances = this.data.map((x) => x.distance);
+      var date = this.data.map((x) => x.date_time);
+      console.log(distances);
+      console.log(date);
+      var list = [];
+      for (var j = 0; j < distances.length; j++)
+        list.push({ 'distance': distances[j], 'date': date[j] });
+
+      list.sort(function (a, b) {
+        return a.date < b.date ? -1 : a.date == b.date ? 0 : 1;
+      });
+
+      for (var k = 0; k < list.length; k++) {
+        distances[k] = list[k].distance;
+        date[k] = list[k].date;
+      }
+      if (choice == "distances") return distances.slice(-10);
+
+      return date.slice(-10);
+    },
+    SetDevice(myState) {
+      this.$bind(
+        "data",
+        db.collection("distances").where("device_id", "==", myState)
+      );
+      this.$bind(
+        "riverData",
+        db.collection("setup_data").where("device_id", "==", myState)
+      );
     },
     editItem(item) {
       console.log(item);
