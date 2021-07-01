@@ -8,5 +8,5 @@ Steps:
 
 - On raspberry pi:
   - set a device id on "device_config.py"
-  - set gmail by enabling less secure apps and the login information in "config.py"
+  - set gmail up by enabling less secure apps and the login information in "config.py"
   - run "rivertracker with mail.py"
