@@ -42,7 +42,7 @@
           ></v-text-field>
           <v-text-field
             v-model="river_difference"
-            label="River diffrence"
+            label="River difference"
             :placeholder="data.river_difference"
             :rules="rules.a"
             required
