@@ -119,8 +119,8 @@
       </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="ShowItem(item)"> mdi-eye </v-icon>
-        <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-        <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+        <v-icon small v-if="user.loggedIn == true" class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
+        <v-icon small v-if="user.loggedIn == true"  @click="deleteItem(item)"> mdi-delete </v-icon>
       </template>
     </v-data-table>
 
@@ -132,7 +132,7 @@
 
 <script>
 import { db } from "../firebase/db.js";
-
+import { mapGetters } from "vuex";
 //TIME FUNCTIONS
 function lastDayDate() {
   var today = new Date();
@@ -153,7 +153,7 @@ function lastDayDate() {
     ("00" + lastWeekDay.toString()).slice(-2);
   return lastDayDisplayPadded;
 }
-import { mapGetters } from 'vuex'
+
 export default {
   
   components: {},
@@ -177,7 +177,9 @@ export default {
 
   computed: {
     ...mapGetters({
-      myState: 'getCurrentDevice'
+      myState: 'getCurrentDevice',
+      user: "user"
+
     }),
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
@@ -200,7 +202,7 @@ export default {
     myState: {
       immediate: true,
       handler(myState){
-        this.$bind('data', db.collection("distances").limit(10).where("device_id", "==", myState))
+        this.$bind('data', db.collection("distances").limit(15).where("device_id", "==", myState))
         this.$bind('riverData', db.collection("setup_data").where("device_id", "==", myState))
       }
     },
@@ -218,7 +220,7 @@ mounted: function(){
     SetDevice(myState){
         this.$bind(
           "data",
-          db.collection("distances").where("device_id", "==", myState).limit(10)
+          db.collection("distances").where("device_id", "==", myState).limit(15)
         );
         this.$bind(
           "riverData",
@@ -338,7 +340,7 @@ mounted: function(){
   },
   firestore: {
       data: db
-      .collection("distances").limit(10), //dataset for 10 readings
+      .collection("distances").limit(15), //dataset for 15 readings
 
     riverData: db.collection("setup_data"),
   },

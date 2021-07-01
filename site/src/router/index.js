@@ -20,11 +20,7 @@ const routes = [
     name: 'Settings',
     component: () => import( '../views/Settings.vue')
   },
-  {
-    path: '/register',
-    name: 'Register',
-    component: () => import( '../views/register.vue')
-  }
+
 ]
 
 const router = new VueRouter({

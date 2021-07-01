@@ -119,8 +119,8 @@
       </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="ShowItem(item)"> mdi-eye </v-icon>
-        <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-        <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+        <v-icon small v-if="user.loggedIn == true" class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
+        <v-icon small v-if="user.loggedIn == true" @click="deleteItem(item)"> mdi-delete </v-icon>
       </template>
     </v-data-table>
 
@@ -174,7 +174,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      myState: 'getCurrentDevice'
+      myState: 'getCurrentDevice',
+      user: "user"
     }),
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";

@@ -67,7 +67,7 @@
       v-if="renderComponent"
     />
     <div style="display: flex; justify-content: center">
-      <v-btn style="margin-bottom: 3em" @click="add_item">Add Item</v-btn>
+      <v-btn style="margin-bottom: 3em" v-if="user.loggedIn == true" @click="add_item">Add Item</v-btn>
     </div>
 
     <v-simple-table dark>
@@ -98,10 +98,10 @@
               <v-icon small class="mr-2" @click="ShowItem(item)">
                 mdi-map-marker
               </v-icon>
-              <v-icon small class="mr-2" @click="editItem(item)">
+              <v-icon small v-if="user.loggedIn == true" class="mr-2" @click="editItem(item)">
                 mdi-pencil
               </v-icon>
-              <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+              <v-icon small v-if="user.loggedIn == true" @click="deleteItem(item)"> mdi-delete </v-icon>
             </td>
           </tr>
         </tbody>
@@ -115,6 +115,7 @@
 import { db } from "../firebase/db.js";
 import HereMap from "../components/HereMap";
 import MapSetup from "../components/edit_setup_map";
+import { mapGetters } from "vuex";
 export default {
   components: {
     HereMap,
@@ -137,6 +138,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters({
+      user: "user"
+    }),
     longitude() {
       return this.data.map((x) => x.longitude);
     },
@@ -191,7 +195,9 @@ export default {
     },
     deleteItemConfirm() {
       let data_id = this.editedIndex.id;
-
+       this.$nextTick(() => {
+        // Add the component back in
+      });
       this.closeDelete();
       //delete item from setup_data
       db.collection("setup_data").doc(data_id).delete();
