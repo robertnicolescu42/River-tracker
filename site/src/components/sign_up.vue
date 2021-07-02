@@ -15,7 +15,7 @@
         <v-card-text>
           <v-text-field v-model="email" label="Email"></v-text-field>
           <span class="text-caption grey--text text--darken-1">
-            This is the email you will use to login to your Vuetify account
+            This is the email you will use to login to your Rivertracker account
           </span>
         </v-card-text>
       </v-window-item>

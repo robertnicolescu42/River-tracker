@@ -144,25 +144,25 @@
 import { db } from "../firebase/db.js";
 import { mapGetters } from "vuex";
 //TIME FUNCTIONS
-function lastDayDate() {
-  var today = new Date();
-  var lastWeek = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate() - 1
-  );
-  var lastWeekMonth = lastWeek.getMonth() + 1;
-  var lastWeekDay = lastWeek.getDate();
-  var lastWeekYear = lastWeek.getFullYear();
+// function lastMonthDate() {
+//   var today = new Date();
+//   var lastWeek = new Date(
+//     today.getFullYear(),
+//     today.getMonth() - 1,
+//     today.getDate()
+//   );
+//   var lastWeekMonth = lastWeek.getMonth() + 1;
+//   var lastWeekDay = lastWeek.getDate();
+//   var lastWeekYear = lastWeek.getFullYear();
 
-  var lastDayDisplayPadded =
-    ("0000" + lastWeekYear.toString()).slice(-4) +
-    "-" +
-    ("00" + lastWeekMonth.toString()).slice(-2) +
-    "-" +
-    ("00" + lastWeekDay.toString()).slice(-2);
-  return lastDayDisplayPadded;
-}
+//   var lastMonthDisplayPadded =
+//     ("0000" + lastWeekYear.toString()).slice(-4) +
+//     "-" +
+//     ("00" + lastWeekMonth.toString()).slice(-2) +
+//     "-" +
+//     ("00" + lastWeekDay.toString()).slice(-2) + " 00:00:00";
+//   return lastMonthDisplayPadded;
+// }
 
 export default {
   components: {},
@@ -266,7 +266,7 @@ export default {
     SetDevice(myState) {
       this.$bind(
         "data",
-        db.collection("distances").where("device_id", "==", myState).limit(15)
+        db.collection("distances").where("device_id", "==", myState)
       );
       this.$bind(
         "riverData",
@@ -353,7 +353,7 @@ export default {
       return lastDayDisplayPadded;
     },
     recentAverage() {
-      lastDayDate();
+      //lastDayDate();
       var sum = 0;
       var array = this.data.slice(-10);
       for (var i = 0; i < 10; i++) {
@@ -385,8 +385,9 @@ export default {
     },
   },
   firestore: {
-    data: db.collection("distances").limit(15), //dataset for 15 readings
-
+    //data: db.collection("distances").orderBy("date_time").limit(15), //dataset for 15 readings
+    data: db.collection("distances")
+      .limit(48),
     riverData: db.collection("setup_data"),
   },
 };
