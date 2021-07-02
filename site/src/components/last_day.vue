@@ -223,7 +223,7 @@ export default {
       handler(myState) {
         this.$bind(
           "data",
-          db.collection("distances").limit(15).where("device_id", "==", myState)
+          db.collection("distances").where("device_id", "==", myState)
         );
         this.$bind(
           "riverData",
@@ -355,7 +355,7 @@ export default {
     recentAverage() {
       //lastDayDate();
       var sum = 0;
-      var array = this.data.slice(-10);
+      var array = this.data;
       for (var i = 0; i < 10; i++) {
         sum += parseInt(array[i].distance, 10);
       }
@@ -387,7 +387,7 @@ export default {
   firestore: {
     //data: db.collection("distances").orderBy("date_time").limit(15), //dataset for 15 readings
     data: db.collection("distances")
-      .limit(48),
+      ,
     riverData: db.collection("setup_data"),
   },
 };

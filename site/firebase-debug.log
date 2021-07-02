@@ -1,0 +1,108 @@
+[debug] [2021-07-02T12:39:11.194Z] ----------------------------------------------------------------------
+[debug] [2021-07-02T12:39:11.196Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\rober\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2021-07-02T12:39:11.196Z] CLI Version:   8.16.2
+[debug] [2021-07-02T12:39:11.196Z] Platform:      win32
+[debug] [2021-07-02T12:39:11.196Z] Node Version:  v12.19.0
+[debug] [2021-07-02T12:39:11.201Z] Time:          Fri Jul 02 2021 15:39:11 GMT+0300 (Eastern European Summer Time)
+[debug] [2021-07-02T12:39:11.201Z] ----------------------------------------------------------------------
+[debug] [2021-07-02T12:39:11.201Z] 
+[debug] [2021-07-02T12:39:11.210Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2021-07-02T12:39:11.211Z] > authorizing via signed-in user
+[debug] [2021-07-02T12:39:11.211Z] [iam] checking project river-tracker-295612 for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]
+[debug] [2021-07-02T12:39:11.214Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/river-tracker-295612:testIamPermissions  
+ {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2021-07-02T12:39:12.114Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:12 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=678","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-07-02T12:39:12.116Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/river-tracker-295612  
+ 
+[debug] [2021-07-02T12:39:12.334Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:12 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] 
+[info] === Deploying to 'river-tracker-295612'...
+[info] 
+[info] i  deploying storage, firestore, hosting 
+[debug] [2021-07-02T12:39:12.337Z] >>> HTTP REQUEST GET https://appengine.googleapis.com/v1/apps/river-tracker-295612  
+ 
+[debug] [2021-07-02T12:39:12.690Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:12 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] i  firebase.storage: checking storage.rules for compilation errors... 
+[debug] [2021-07-02T12:39:12.692Z] >>> HTTP REQUEST POST https://firebaserules.googleapis.com/v1/projects/river-tracker-295612:test  
+ {"source":{"files":[{"name":"storage.rules","content":"rules_version = '2';\nservice firebase.storage {\n  match /b/{bucket}/o {\n    match /{allPaths=**} {\n      allow read, write: if request.auth!=null;\n    }\n  }\n}\n"}]}}
+[debug] [2021-07-02T12:39:12.996Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:12 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] +  firebase.storage: rules file storage.rules compiled successfully 
+[info] i  firestore: reading indexes from firestore.indexes.json... 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2021-07-02T12:39:13.000Z] >>> HTTP REQUEST POST https://firebaserules.googleapis.com/v1/projects/river-tracker-295612:test  
+ {"source":{"files":[{"name":"firestore.rules","content":"service cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write;\n    }\n  }\n}\n"}]}}
+[debug] [2021-07-02T12:39:13.256Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:13 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[warn] !  [W] undefined:undefined - Ruleset uses old version (version [1]). Please update to the latest version (version [2]). 
+[info] +  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2021-07-02T12:39:13.259Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/river-tracker-295612/versions  
+ {"config":{"rewrites":[{"glob":"**","path":"/index.html"}]},"labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2021-07-02T12:39:14.729Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:14 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-07-02T12:39:14.731Z] >>> HTTP REQUEST GET https://firebaserules.googleapis.com/v1/projects/river-tracker-295612/releases?pageSize=10&pageToken=  
+ 
+[debug] [2021-07-02T12:39:15.481Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:15 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-07-02T12:39:15.482Z] >>> HTTP REQUEST GET https://firebaserules.googleapis.com/v1/projects/river-tracker-295612/rulesets/4e5a8cdd-99e6-4e23-b986-9913858f19c5  
+ 
+[debug] [2021-07-02T12:39:16.199Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:16 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] i  storage: latest version of storage.rules already up to date, skipping upload... 
+[debug] [2021-07-02T12:39:16.201Z] >>> HTTP REQUEST GET https://firebaserules.googleapis.com/v1/projects/river-tracker-295612/releases?pageSize=10&pageToken=  
+ 
+[debug] [2021-07-02T12:39:16.201Z] >>> HTTP REQUEST GET https://firestore.googleapis.com/v1/projects/river-tracker-295612/databases/(default)/collectionGroups/-/indexes  
+ 
+[debug] [2021-07-02T12:39:16.473Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:16 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-07-02T12:39:16.474Z] >>> HTTP REQUEST GET https://firebaserules.googleapis.com/v1/projects/river-tracker-295612/rulesets/6db3a404-f6bf-4a40-9083-08836eddcc21  
+ 
+[debug] [2021-07-02T12:39:16.632Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:16 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-07-02T12:39:16.633Z] >>> HTTP REQUEST GET https://firestore.googleapis.com/v1/projects/river-tracker-295612/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false  
+ 
+[debug] [2021-07-02T12:39:17.026Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:16 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] +  firestore: deployed indexes in firestore.indexes.json successfully 
+[debug] [2021-07-02T12:39:17.197Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:17 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] i  firestore: latest version of firestore.rules already up to date, skipping upload... 
+[info] i  hosting[river-tracker-295612]: beginning deploy... 
+[info] i  hosting[river-tracker-295612]: found 28 files in dist 
+[debug] [2021-07-02T12:39:17.906Z] [hosting] hash cache [ZGlzdA] stored for 28 files
+[debug] [2021-07-02T12:39:17.906Z] [hosting][hash queue][FINAL] {"max":672,"min":15,"avg":44.5,"active":0,"complete":28,"success":28,"errored":0,"retried":0,"total":28,"elapsed":684}
+[debug] [2021-07-02T12:39:17.907Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/river-tracker-295612/versions/18a2fffa2d36df71:populateFiles  
+ <request body omitted>
+[debug] [2021-07-02T12:39:19.137Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:19 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-07-02T12:39:19.139Z] [hosting][populate queue][FINAL] {"max":1233,"min":1233,"avg":1233,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":1234}
+[debug] [2021-07-02T12:39:19.139Z] [hosting] uploads queued: 3
+[debug] [2021-07-02T12:39:20.677Z] [hosting][upload queue][FINAL] {"max":1539,"min":1280,"avg":1415.6666666666667,"active":0,"complete":3,"success":3,"errored":0,"retried":0,"total":3,"elapsed":1540}
+[info] +  hosting[river-tracker-295612]: file upload complete 
+[debug] [2021-07-02T12:39:20.678Z] [hosting] deploy completed after 3479ms
+[debug] [2021-07-02T12:39:20.843Z] [rules] releasing firebase.storage/river-tracker-295612.appspot.com with ruleset projects/river-tracker-295612/rulesets/4e5a8cdd-99e6-4e23-b986-9913858f19c5
+[debug] [2021-07-02T12:39:20.843Z] >>> HTTP REQUEST PATCH https://firebaserules.googleapis.com/v1/projects/river-tracker-295612/releases/firebase.storage/river-tracker-295612.appspot.com  
+ {"release":{"name":"projects/river-tracker-295612/releases/firebase.storage/river-tracker-295612.appspot.com","rulesetName":"projects/river-tracker-295612/rulesets/4e5a8cdd-99e6-4e23-b986-9913858f19c5"}}
+[debug] [2021-07-02T12:39:21.734Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:21 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-07-02T12:39:21.735Z] [rules] updated release projects/river-tracker-295612/releases/firebase.storage/river-tracker-295612.appspot.com
+[info] +  storage: released rules storage.rules to firebase.storage 
+[debug] [2021-07-02T12:39:21.735Z] [rules] releasing cloud.firestore with ruleset projects/river-tracker-295612/rulesets/6db3a404-f6bf-4a40-9083-08836eddcc21
+[debug] [2021-07-02T12:39:21.736Z] >>> HTTP REQUEST PATCH https://firebaserules.googleapis.com/v1/projects/river-tracker-295612/releases/cloud.firestore  
+ {"release":{"name":"projects/river-tracker-295612/releases/cloud.firestore","rulesetName":"projects/river-tracker-295612/rulesets/6db3a404-f6bf-4a40-9083-08836eddcc21"}}
+[debug] [2021-07-02T12:39:22.610Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 02 Jul 2021 12:39:22 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-07-02T12:39:22.610Z] [rules] updated release projects/river-tracker-295612/releases/cloud.firestore
+[info] +  firestore: released rules firestore.rules to cloud.firestore 
+[debug] [2021-07-02T12:39:22.611Z] [
+  {
+    "config": {
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "site": "river-tracker-295612"
+    },
+    "site": "river-tracker-295612",
+    "version": "sites/river-tracker-295612/versions/18a2fffa2d36df71"
+  }
+]
+[info] i  hosting[river-tracker-295612]: finalizing version... 
+[debug] [2021-07-02T12:39:22.612Z] >>> HTTP REQUEST PATCH https://firebasehosting.googleapis.com/v1beta1/sites/river-tracker-295612/versions/18a2fffa2d36df71?updateMask=status  
+ {"status":"FINALIZED"}
