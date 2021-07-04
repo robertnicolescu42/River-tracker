@@ -21,9 +21,8 @@ import * as firebase from "firebase";
  };
 
 Vue.config.productionTip = false
-
+Vue.config.silent =true
 Vue.use(VueFriendlyIframe)
-Vue.component("LogIn", require("./components/log_in.vue").default);
 Vue.component("SignUp", require("./components/sign_up.vue").default);
 Vue.component("lastDay", require("./components/last_day.vue").default);
 Vue.component("lastWeek", require("./components/last_week.vue").default);

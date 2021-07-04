@@ -4,6 +4,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "site": "river-tracker",
     "public": "dist",
     "ignore": [
       "firebase.json",

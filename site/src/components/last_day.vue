@@ -215,9 +215,6 @@ export default {
   },
 
   watch: {
-    // data(val) {
-    //   this.data1 = val.sort((a, b) => b.date_time - a.date_time)
-    //   },
     myState: {
       immediate: true,
       handler(myState) {
@@ -245,8 +242,8 @@ export default {
     valsAndDists(choice) {
       var distances = this.data.map((x) => x.distance);
       var date = this.data.map((x) => x.date_time);
-      console.log(distances);
-      console.log(date);
+      // console.log(distances);
+      // console.log(date);
       var list = [];
       for (var j = 0; j < distances.length; j++)
         list.push({ 'distance': distances[j], 'date': date[j] });
@@ -274,21 +271,21 @@ export default {
       );
     },
     editItem(item) {
-      console.log(item);
+      // console.log(item);
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     ShowItem(item) {
-      console.log(item);
+      // console.log(item);
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogShow = true;
     },
 
     deleteItem(item) {
-      console.log(item);
+      // console.log(item);
       this.editedIndex = item;
       this.dialogDelete = true;
     },
@@ -317,7 +314,6 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        // Object.assign(this.data[this.editedIndex], this.editedItem);
         let data_id = this.data[this.editedIndex].id;
         let newDistanceValue = this.editedItem.distance;
         db.collection("distances")
@@ -385,9 +381,7 @@ export default {
     },
   },
   firestore: {
-    //data: db.collection("distances").orderBy("date_time").limit(15), //dataset for 15 readings
-    data: db.collection("distances")
-      ,
+    data: db.collection("distances"),
     riverData: db.collection("setup_data"),
   },
 };

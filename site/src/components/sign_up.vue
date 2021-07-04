@@ -1,9 +1,9 @@
 <template>
-  <v-card class="mx-auto" max-width="500">
+  <v-card class="mx-auto" max-width="500" elevation="0">
     <v-card-title class="text-h6 font-weight-regular justify-space-between">
       <span>{{ currentTitle }}</span>
       <v-avatar
-        color = "white"
+        color="white"
         class="subheading black--text"
         size="24"
         v-text="step"
@@ -13,19 +13,38 @@
     <v-window v-model="step">
       <v-window-item :value="1">
         <v-card-text>
-          <v-text-field v-model="email" label="Email"></v-text-field>
+          <v-form v-model="valid">
+            <v-text-field
+              v-model="email"
+              :rules="emailRules"
+              label="Email"
+            ></v-text-field>
+          </v-form>
           <span class="text-caption grey--text text--darken-1">
-            This is the email you will use to login to your Rivertracker account
+            This is the email that will be used to login to the Rivertracker
+            account
           </span>
         </v-card-text>
       </v-window-item>
 
       <v-window-item :value="2">
         <v-card-text>
-          <v-text-field v-model="password" label="Password" type="password"></v-text-field>
-          <v-text-field label="Confirm Password" type="password"></v-text-field>
-          <span class="text-caption grey--text text--darken-1">
-            Please enter a password for your account
+          <v-form v-model="valid">
+            <v-text-field
+              v-model="password"
+              :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="show1 ? 'text' : 'password'"
+              name="input-10-1"
+              hint="At least 8 characters"
+              @click:append="show1 = !show1"
+            ></v-text-field>
+          </v-form>
+          <span class="text-caption grey--text text--darken-1" v-if="show == false">
+            Please enter a password for the account
+          </span>
+          <span class="text-caption red--text text--darken-1" v-if="show == true">
+            <br>
+            {{ error }} Please refresh the page to try again
           </span>
         </v-card-text>
       </v-window-item>
@@ -41,17 +60,17 @@
           <h3 class="text-h6 font-weight-light mb-2">
             Welcome to Rivertracker
           </h3>
-          <span class="text-caption grey--text">Thanks for signing up!</span>
+          <span class="text-caption grey--text"
+            >The account is now registered!</span
+          >
         </div>
       </v-window-item>
     </v-window>
 
-    <v-divider></v-divider>
 
     <v-card-actions>
-      <v-btn :disabled="step === 1" text @click="step--"> Back </v-btn>
       <v-spacer></v-spacer>
-      <v-btn :disabled="step === 3" depressed @click="step++"> Next </v-btn>
+      <v-btn :disabled="step === 3" depressed @click="next()"> Next </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -62,33 +81,62 @@ export default {
   data: () => ({
     step: 1,
     password: "",
+    passwordcheck: "",
     email: "",
     error: "",
-    name:""
+    name: "",
+    show1: false,
+    show: false,
+    emailRules: [
+      (v) => !!v || "E-mail is required",
+      (v) =>
+        /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+          v
+        ) || "E-mail must be valid",
+    ],
+    valid: false,
   }),
-  watch:{
-    step: function (val) {
-      if (val == 3) {
-        firebase
-          .auth()
-          .createUserWithEmailAndPassword(this.email, this.password)
-          .then((data) => {
-            data.user
-              .updateProfile({
-                displayName: "admin",
-              })
-              .then(() => {});
-          })
-          .catch((err) => {
-            this.error = err.message;
+  methods: {
+    login() {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.email, this.password)
+        .then((data) => {
+          data.user
+            .updateProfile({
+              displayName: "admin",
+            })
+            .then(() => {
+              this.show = false
+            });
+        })
+        .catch((err) => {
+          this.show = true
+          this.error = err.message;
+        });
+    },
+    next() {
+      if (this.valid == true) {
+        this.error = "";
+        if (this.step == 2) {
+          this.login().then(function () {
+            if (this.error == "") {
+              this.step++;
+            }
           });
-      }}
+        } else {
+          this.valid = false;
+          this.step++;
+        }
+      }
+    },
   },
+
   computed: {
     currentTitle() {
       switch (this.step) {
         case 1:
-          return "Sign Up";
+          return "Register a user";
         case 2:
           return "Create a password";
         default:

@@ -1,21 +1,23 @@
 <template>
   <v-container>
     <v-dialog
-      v-model="dialogShow"
-      max-width="900px"
-      max-height="800"
+      v-model="user_modal"
+      max-width="500"
+      max-height="1000px"
       style="z-index: 1000"
     >
       <v-card>
-        <v-card-title>
-          <span class="headline">Location</span>
-        </v-card-title>
 
-        <mapSetup :data="data1" />
+
+
+
+        <v-container fluid>
+              <SignUp />
+        </v-container>
+
 
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialogShow = false">
+          <v-btn color="blue darken-1" text @click="user_modal = false" style="margin-top:-7em">
             Exit
           </v-btn>
         </v-card-actions>
@@ -67,7 +69,9 @@
       v-if="renderComponent"
     />
     <div style="display: flex; justify-content: center">
-      <v-btn style="margin-bottom: 3em" v-if="user.loggedIn == true" @click="add_item">Add Item</v-btn>
+      <v-btn style="margin-bottom: 3em" v-if="user.loggedIn == true" @click="add_item">Add Device</v-btn>
+      <v-btn style="margin-bottom: 3em; margin-left:2em" v-if="user.loggedIn == true" @click="add_user">Add User</v-btn>
+
     </div>
 
     <v-simple-table dark>
@@ -135,6 +139,7 @@ export default {
       add: false,
       zoom: 10, //zoom INITIAL
       renderComponent: true,
+      user_modal: false
     };
   },
   computed: {
@@ -166,6 +171,9 @@ export default {
   methods: {
     add_item() {
       (this.add = true), (this.addItem = true);
+    },
+    add_user() {
+      this.user_modal=true
     },
     deleteItem(item) {
       this.zoom = 15;
@@ -217,6 +225,9 @@ export default {
               console.log("Error getting documents: ", error);
           });
 
+      this.$store.dispatch("setCurrentDevice", 1);
+
+      this.$forceUpdate();
     },
     ShowItem(item) {
       this.zoom = 15;

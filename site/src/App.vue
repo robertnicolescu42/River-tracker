@@ -6,39 +6,66 @@
       max-height="1000px"
       style="z-index: 1000"
     >
-      <v-card>
+      <v-card >
         <v-card-title>
+          <span>Log In</span>
         </v-card-title>
-
-<v-tabs
-      v-model="tab"
-      background-color="transparent"
-      color="basil"
-      grow
-    >
-      <v-tab>Log In</v-tab>
-      <v-tab>Register</v-tab>
-      <!-- last day -->
-      <v-tab-item> 
         <v-container fluid>
-              <LogIn />
-        </v-container>
-      </v-tab-item>
-      <!-- last day -->
+          <v-card max-width="500" elevation="0">
+            <v-window v-model="step">
+              <v-window-item :value="1">
+                <v-card-text>
+                  <v-text-field
+                    v-model="email"
+                    label="Email"
+                    :rules="emailRules"
+                    type="email"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="password"
+                    label="Password"
+                    :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                    :type="show1 ? 'text' : 'password'"
+                    name="input-10-1"
+                    hint="At least 8 characters"
+                    @click:append="show1 = !show1"
+                  ></v-text-field>
+                  <span class="text-caption grey--text text--darken-1" v-if="errorcheck == false">
+                    {{ error }}
+                  </span>
+                  <span class="text-caption red--text text--darken-1" v-if="errorcheck == true">
+                    {{ error }}
+                  </span>
+                </v-card-text>
+              </v-window-item>
 
-      <!-- last week -->
-      <v-tab-item> 
-        <v-container fluid>
-              <SignUp />
+              <v-window-item :value="2">
+                <div class="pa-4 text-center">
+                  <v-img
+                    class="mb-4"
+                    contain
+                    height="40"
+                    src="/icons/wave-inverted.png"
+                  ></v-img>
+                  <h3 class="text-h6 font-weight-light mb-2">
+                    Welcome to Rivertracker
+                  </h3>
+                  <span class="text-caption grey--text"
+                    >You are now logged in.</span
+                  >
+                </div>
+              </v-window-item>
+            </v-window>
+          </v-card>
         </v-container>
-      </v-tab-item>
-
-    </v-tabs>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialogShow = false">
+          <v-btn color="darken-1" text @click="dialogShow = false">
             Exit
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text :disabled="step === 2" @click="login()">
+            Log In
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -60,10 +87,16 @@
               </h1></router-link
             >
             <v-spacer style="text-align: right">
-              <v-btn v-if="user.loggedIn == false" elevation="2" @click="dialogShow=true">Log In</v-btn>
-              <v-btn v-if="user.loggedIn == true" elevation="2" @click="signOut">Log Out</v-btn>
-              
-              </v-spacer>
+              <v-btn
+                v-if="user.loggedIn == false"
+                elevation="2"
+                @click="dialogShow = true"
+                >Log In</v-btn
+              >
+              <v-btn v-if="user.loggedIn == true" elevation="2" @click="signOut"
+                >Log Out</v-btn
+              >
+            </v-spacer>
           </v-card-title>
           <!-- 
     <v-tabs-items v-model="tab">
@@ -88,7 +121,7 @@
         <v-select
           :items="this.devices1"
           label="Device ID"
-          v-show="$route.name=='Home'"
+          v-show="$route.name == 'Home'"
           v-model="$store.getters.getCurrentDevice"
           @change="setDevice($event)"
           style="max-width: 8em; margin-left: 1em"
@@ -102,6 +135,7 @@
             </v-list-item>
           </template>
         </v-select>
+
         <v-spacer></v-spacer>
         <p style="margin-bottom: 0px">
           <a
@@ -135,22 +169,47 @@ export default {
     devices1: [],
     currentDevice: 1,
     dialogShow: false,
+    step: 1,
+    error: "Enter your credentials.",
+    errorcheck: false,
+    email: "",
+    password: "",
+    show1: false,
+    emailRules: [
+      (v) => !!v || "E-mail is required",
+      (v) =>
+        /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+          v
+        ) || "E-mail must be valid",
+    ],
   }),
   computed: {
     // map `this.user` to `this.$store.getters.user`
     ...mapGetters({
-      user: "user"
-    })
+      user: "user",
+    }),
   },
   methods: {
+    login() {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.email, this.password)
+        .then(() => {
+          this.errorcheck = false
+          this.dialogShow = false;
+        })
+        .catch((err) => {
+          this.errorcheck = true
+          this.error = err.message;
+        });
+    },
     signOut() {
       firebase
         .auth()
         .signOut()
         .then(() => {
-          this.$router.replace({
-            name: "Home"
-          });
+          this.email = "";
+          this.password = "";
         });
     },
     Show() {
@@ -165,9 +224,11 @@ export default {
   },
   watch: {
     riverData: function (val) {
+      var temp = []; 
       for (let index = 0; index < val.length; index++) {
-        this.devices1.push(val[index].device_id);
+        temp.push(val[index].device_id);
       }
+        this.devices1 = temp
     },
   },
 };

@@ -241,8 +241,8 @@ export default {
     valsAndDists(choice) {
       var distances = this.data.map((x) => x.distance);
       var date = this.data.map((x) => x.date_time);
-      console.log(distances);
-      console.log(date);
+      // console.log(distances);
+      // console.log(date);
       var list = [];
       for (var j = 0; j < distances.length; j++)
         list.push({ 'distance': distances[j], 'date': date[j] });
@@ -270,21 +270,21 @@ export default {
       );
     },
     editItem(item) {
-      console.log(item);
+      // console.log(item);
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     ShowItem(item) {
-      console.log(item);
+      // console.log(item);
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogShow = true;
     },
 
     deleteItem(item) {
-      console.log(item);
+      // console.log(item);
       this.editedIndex = item;
       this.dialogDelete = true;
     },
