@@ -1,5 +1,6 @@
 <template>
   <v-card class="mx-auto" max-width="500" elevation="0">
+
     <v-card-title class="text-h6 font-weight-regular justify-space-between">
       <span>{{ currentTitle }}</span>
       <v-avatar
@@ -119,11 +120,10 @@ export default {
       if (this.valid == true) {
         this.error = "";
         if (this.step == 2) {
-          this.login().then(function () {
+          this.login()
             if (this.error == "") {
               this.step++;
-            }
-          });
+          }
         } else {
           this.valid = false;
           this.step++;

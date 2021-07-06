@@ -11,15 +11,16 @@ const routes = [
     component: Home
   },
   {
-    path: '/about',
-    name: 'Home',
-    component: () => import( '../views/About.vue')
-  },
-  {
     path: '/settings',
     name: 'Settings',
     component: () => import( '../views/Settings.vue')
   },
+  {
+    path: '/404', name: 'NotFound', component: () => import( '../views/404.vue')
+},
+{
+    path: '/:catchAll(.*)', redirect:'404'
+}
 
 ]
 

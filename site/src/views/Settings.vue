@@ -1,23 +1,44 @@
 <template>
   <v-container>
     <v-dialog
+      v-model="dialogShow"
+      max-width="900px"
+      max-height="800"
+      style="z-index: 1000"
+    >
+      <v-card>
+        <v-card-title>
+          <span class="headline">Location</span>
+        </v-card-title>
+
+        <mapSetup :data="data1" />
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" style="margin-top:-5em" text @click="dialogShow = false">
+            Exit
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
       v-model="user_modal"
       max-width="500"
       max-height="1000px"
       style="z-index: 1000"
     >
       <v-card>
-
-
-
-
         <v-container fluid>
-              <SignUp />
+          <SignUp />
         </v-container>
 
-
         <v-card-actions>
-          <v-btn color="blue darken-1" text @click="user_modal = false" style="margin-top:-7em">
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="user_modal = false"
+            style="margin-top: -7em"
+          >
             Exit
           </v-btn>
         </v-card-actions>
@@ -69,9 +90,18 @@
       v-if="renderComponent"
     />
     <div style="display: flex; justify-content: center">
-      <v-btn style="margin-bottom: 3em" v-if="user.loggedIn == true" @click="add_item">Add Device</v-btn>
-      <v-btn style="margin-bottom: 3em; margin-left:2em" v-if="user.loggedIn == true" @click="add_user">Add User</v-btn>
-
+      <v-btn
+        style="margin-bottom: 3em"
+        v-if="user.loggedIn == true"
+        @click="add_item"
+        >Add Device</v-btn
+      >
+      <v-btn
+        style="margin-bottom: 3em; margin-left: 2em"
+        v-if="user.loggedIn == true"
+        @click="add_user"
+        >Add User</v-btn
+      >
     </div>
 
     <v-simple-table dark>
@@ -102,10 +132,21 @@
               <v-icon small class="mr-2" @click="ShowItem(item)">
                 mdi-map-marker
               </v-icon>
-              <v-icon small v-if="user.loggedIn == true" class="mr-2" @click="editItem(item)">
+              <v-icon
+                small
+                v-if="user.loggedIn == true"
+                class="mr-2"
+                @click="editItem(item)"
+              >
                 mdi-pencil
               </v-icon>
-              <v-icon small v-if="user.loggedIn == true" @click="deleteItem(item)"> mdi-delete </v-icon>
+              <v-icon
+                small
+                v-if="user.loggedIn == true"
+                @click="deleteItem(item)"
+              >
+                mdi-delete
+              </v-icon>
             </td>
           </tr>
         </tbody>
@@ -139,12 +180,12 @@ export default {
       add: false,
       zoom: 10, //zoom INITIAL
       renderComponent: true,
-      user_modal: false
+      user_modal: false,
     };
   },
   computed: {
     ...mapGetters({
-      user: "user"
+      user: "user",
     }),
     longitude() {
       return this.data.map((x) => x.longitude);
@@ -173,7 +214,7 @@ export default {
       (this.add = true), (this.addItem = true);
     },
     add_user() {
-      this.user_modal=true
+      this.user_modal = true;
     },
     deleteItem(item) {
       this.zoom = 15;
@@ -203,27 +244,27 @@ export default {
     },
     deleteItemConfirm() {
       let data_id = this.editedIndex.id;
-       this.$nextTick(() => {
+      this.$nextTick(() => {
         // Add the component back in
       });
       this.closeDelete();
       //delete item from setup_data
       db.collection("setup_data").doc(data_id).delete();
 
-
       //delete all corresponding items from distances with the respective
       //device id
-      var device_id = this.editedIndex.device_id; 
-      db.collection("distances").where("device_id", "==", device_id)
-          .get()
-          .then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                  db.collection("distances").doc(doc.id).delete()
-              });
-          })
-          .catch((error) => {
-              console.log("Error getting documents: ", error);
+      var device_id = this.editedIndex.device_id;
+      db.collection("distances")
+        .where("device_id", "==", device_id)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            db.collection("distances").doc(doc.id).delete();
           });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
 
       this.$store.dispatch("setCurrentDevice", 1);
 
@@ -234,19 +275,20 @@ export default {
       this.renderComponent = false;
 
       this.$nextTick(() => {
-        // Add the component back in
         this.renderComponent = true;
       });
       this.center = [item.latitude, item.longitude];
     },
     editItem(item) {
       console.log(item);
+      console.log("dialogshow: " + this.dialogShow);
       this.data1 = item;
       this.center = [item.latitude, item.longitude];
       // this.editedIndex = this.data.indexOf(item);
       // this.editedItem = Object.assign({}, item);
 
       this.dialogShow = true;
+      // console.log("dialogshow: " + this.dialogShow);
     },
   },
 };
