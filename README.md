@@ -4,6 +4,7 @@ https://drive.google.com/file/d/15pf6hBGVI41Zoq-URmmWe-80QxOVm8MP/view?usp=shari
 Steps:
 - VScode:
   - cd rivertracker
+  - npm i
   - npm run serve
 
 - On raspberry pi:
